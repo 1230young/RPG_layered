@@ -711,12 +711,12 @@ class ScriptRunner:
 
     def process(self, p):
         for script in self.alwayson_scripts:
-            try:
+            # try:
                 script_args = p.script_args
                 print('process_script_args',script_args)
                 script.process(p, *script_args)
-            except Exception:
-                errors.report(f"Error running process: {script.filename}", exc_info=True)
+            # except Exception:
+            #     errors.report(f"Error running process: {script.filename}", exc_info=True)
 
     def before_process_batch(self, p, **kwargs):
         for script in self.alwayson_scripts:

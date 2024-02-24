@@ -178,7 +178,7 @@ def compress_components(l):
     
 class Script(modules.scripts.Script):
     def __init__(self,active = False,mode = "Matrix",calc = "Attention",h = 0, w =0, debug = False, debug2 = False, usebase = False, 
-    usecom = False, usencom = False, batch = 1,isxl = False, lstop=0, lstop_hr=0, diff = None):
+    usecom = False, usencom = False, batch = 1,isxl = False, lstop=0, lstop_hr=0, diff = None, use_layer = False, bboxes = None):
         self.active = active
         if mode == "Columns": mode = "Horizontal"
         if mode == "Rows": mode = "Vertical"
@@ -226,10 +226,12 @@ class Script(modules.scripts.Script):
         #script communicator
         self.hooked = False
         self.condi = 0
+        self.use_layer = use_layer
+        self.bboxes = bboxes
 
         self.used_prompt = ""
         self.logprops = ["active","mode","usebase","usecom","usencom","batch_size","isxl","h","w","aratios",
-                        "divide","count","eq","pn","hr","pe","step","diff","used_prompt"]
+                        "divide","count","eq","pn","hr","pe","step","diff","used_prompt","use_layer","bboxes"]
         self.log = {}
 
     def logger(self):
@@ -377,7 +379,7 @@ class Script(modules.scripts.Script):
                 usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask, lstop, lstop_hr, flipper]
 
     def process(self, p, active, a_debug , rp_selected_tab, mmode, xmode, pmode, aratios, bratios,
-                usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask, lstop, lstop_hr, flipper):
+                usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask, lstop, lstop_hr, flipper, use_layer=False, bboxes=None):
         if type(options) is bool:
             options = ["disable convert 'AND' to 'BREAK'"] if options else []
         elif type(options) is str:
@@ -399,7 +401,7 @@ class Script(modules.scripts.Script):
         if rp_selected_tab == "Nope": rp_selected_tab = "Matrix"
 
         if debug: pprint([active, debug, rp_selected_tab, mmode, xmode, pmode, aratios, bratios,
-                usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask, lstop, lstop_hr, flipper])
+                usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask, lstop, lstop_hr, flipper, use_layer, bboxes])
 
         tprompt = p.prompt[0] if type(p.prompt) == list else p.prompt
 
@@ -438,15 +440,17 @@ class Script(modules.scripts.Script):
             "RP LoRA Stop Step":lstop,
             "RP LoRA Hires Stop Step":lstop_hr,
             "RP Flip": flipper,
+            "RP Use Layer": use_layer,
+            "RP Bboxes": bboxes
         })
 
         savepresets("lastrun",rp_selected_tab, mmode, xmode, pmode, aratios,bratios,
-                     usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask,lstop, lstop_hr, flipper)
+                     usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask,lstop, lstop_hr, flipper, use_layer, bboxes)
 
         if flipper:aratios = changecs(aratios)
 
         self.__init__(active, tabs2mode(rp_selected_tab, mmode, xmode, pmode) ,calcmode ,p.height, p.width, debug, debug2,
-        usebase, usecom, usencom, p.batch_size, hasattr(shared.sd_model,"conditioner"),lstop, lstop_hr, diff = diff)
+        usebase, usecom, usencom, p.batch_size, hasattr(shared.sd_model,"conditioner"),lstop, lstop_hr, diff = diff, use_layer=use_layer, bboxes=bboxes)
 
         self.all_prompts = p.all_prompts.copy()
         self.all_negative_prompts = p.all_negative_prompts.copy()
@@ -528,7 +532,7 @@ class Script(modules.scripts.Script):
             p.disable_extra_networks = False
 
     def before_hr(self, p, active, _, rp_selected_tab, mmode, xmode, pmode, aratios, bratios,
-                      usebase, usecom, usencom, calcmode,nchangeand, lnter, lnur, threshold, polymask,lstop, lstop_hr, flipper):
+                      usebase, usecom, usencom, calcmode,nchangeand, lnter, lnur, threshold, polymask,lstop, lstop_hr, flipper, use_layer, bboxes):
         if self.active:
             self.in_hr = True
             if "La" in self.calc:
@@ -541,7 +545,7 @@ class Script(modules.scripts.Script):
                     pass
 
     def process_batch(self, p, active, _, rp_selected_tab, mmode, xmode, pmode, aratios, bratios,
-                      usebase, usecom, usencom, calcmode,nchangeand, lnter, lnur, threshold, polymask,lstop, lstop_hr,flipper,**kwargs):
+                      usebase, usecom, usencom, calcmode,nchangeand, lnter, lnur, threshold, polymask,lstop, lstop_hr,flipper,use_layer, bboxes,**kwargs):
         # print(kwargs["prompts"])
 
         if self.active:

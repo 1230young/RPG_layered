@@ -7,6 +7,8 @@ import torch
 import re
 import torch
 from transformers import LlamaForCausalLM, LlamaTokenizer
+# from openai import AzureOpenAI
+import openai
 
 def extract_output(text):
     # Find the output in the text
@@ -15,6 +17,102 @@ def extract_output(text):
     return output_match.group(1).strip() if output_match else None
 
 def GPT4(prompt,version,key):
+    openai.api_type = "azure"
+    openai.api_base = "https://test-gpt-4-turbo-australia-east.openai.azure.com/"
+    openai.api_version = "2023-07-01-preview"
+    openai.api_key = "b1485beab36d4796841878836f6b3575"
+    with open('template/template.txt', 'r') as f:
+        template=f.readlines()
+    if version=='multi-attribute':
+        with open('template/human_multi_attribute_examples.txt', 'r') as f:
+            incontext_examples=f.readlines()
+    elif version=='complex-object':
+        with open('template/complex_multi_object_examples.txt', 'r') as f:
+            incontext_examples=f.readlines()
+    user_textprompt=f"Caption:{prompt} \n Let's think step by step:"
+    
+    textprompt= f"{' '.join(template)} \n {' '.join(incontext_examples)} \n {user_textprompt}"
+
+    response = openai.ChatCompletion.create(
+                    model='gpt-4-0314',
+                    engine="gpt-4",
+                    messages=[
+                        {
+                        "role": "user",
+                        "content": textprompt
+                        }
+                    ],
+                    temperature=0.2,  # TODO: figure out which temperature is best for evaluation
+                )
+
+    # print(response.model_dump_json(indent=2))
+    text=response.choices[0].message.content
+    print(text)
+    # Extract the split ratio and regional prompt
+
+    return get_params_dict(text), textprompt
+
+    # Define a function to query the OpenAI API and evaluate the answer
+    def get_yes_no_answer(question):
+        while True:
+            try:
+                
+                break
+            except openai.error.RateLimitError:
+                pass
+            except Exception as e:
+                print(e)
+            time.sleep(NUM_SECONDS_TO_SLEEP)
+
+        answer = response['choices'][0]['message']['content']
+        yes_no_regex = re.compile(r"^(yes|no)$", re.IGNORECASE)
+
+
+
+
+
+    # gets the API Key from environment variable AZURE_OPENAI_API_KEY
+    client = AzureOpenAI(
+        base_url="https://test-gpt-4-turbo-australia-east.openai.azure.com/",
+        api_key = key,
+        # https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#rest-api-versioning
+        api_version="2023-07-01-preview",
+        # https://learn.microsoft.com/en-us/azure/cognitive-services/openai/how-to/create-resource?pivots=web-portal#create-a-resource
+        # azure_endpoint="https://gcrendpoint.azurewebsites.net",
+        # azure_deployment="gpt-4/chat/completions"
+    )
+
+    with open('template/template.txt', 'r') as f:
+        template=f.readlines()
+    if version=='multi-attribute':
+        with open('template/human_multi_attribute_examples.txt', 'r') as f:
+            incontext_examples=f.readlines()
+    elif version=='complex-object':
+        with open('template/complex_multi_object_examples.txt', 'r') as f:
+            incontext_examples=f.readlines()
+    user_textprompt=f"Caption:{prompt} \n Let's think step by step:"
+    
+    textprompt= f"{' '.join(template)} \n {' '.join(incontext_examples)} \n {user_textprompt}"
+    completion = client.chat.completions.create(
+        model="gpt-4-0314",  # e.g. gpt-35-instant
+        max_tokens=300,
+        messages=[
+            {
+            "role": "user",
+            "content": textprompt
+            }
+        ],
+    )
+    print(completion.model_dump_json(indent=2))
+    text=completion.choices[0].message.content
+    print(text)
+    # Extract the split ratio and regional prompt
+
+    return get_params_dict(text)
+
+
+
+def GPT4_old(prompt,version,key):
     url = "https://api.openai.com/v1/chat/completions"
     api_key = key
     with open('template/template.txt', 'r') as f:

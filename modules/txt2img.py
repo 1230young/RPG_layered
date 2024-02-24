@@ -53,8 +53,10 @@ def txt2img(id_task: str, prompt: str, negative_prompt: str, prompt_styles, step
     base_ratio=kwargs['base_ratio']
     use_base=kwargs['use_base']
     use_common=kwargs['use_common']
+    use_layer=kwargs['use_layer']
+    bboxes=kwargs['bboxes']
     
-    process_args=(activate,False,'Matrix','Columns','Mask','Prompt',split_ratio,base_ratio,use_base,use_common,False,'Attention',[False],0,0,0.4,None,0,0,False)
+    process_args=(activate,False,'Matrix','Columns','Mask','Prompt',split_ratio,base_ratio,use_base,use_common,False,'Attention',[False],0,0,0.4,None,0,0,False,use_layer,bboxes)
 
     p.scripts = modules.scripts.scripts_txt2img
     p.script_args = process_args

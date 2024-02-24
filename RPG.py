@@ -11,6 +11,48 @@ from mllm import GPT4,local_llm
 import argparse
 from template.demo import demo_list
 import time
+from mmcv import Config
+import json
+from inference_data import load_inference_data
+def resize_bbox(bbox, height, width, source_height=1457, source_width=1457, scale=16):
+    """
+    Resize bounding box from source image to target image
+    Args:
+        bbox (list): [top, left, bottom, right]
+        height (int): target image height
+        width (int): target image width
+        source_height (int): source image height
+        source_width (int): source image width
+    Returns:
+        list: [top, left, bottom, right]
+    """
+    bbox = [bbox[0] * height / source_height, bbox[1] * width / source_width,
+            bbox[2] * height / source_height, bbox[3] * width / source_width]
+    bbox[0]=int(min(max(0,bbox[0]),height-1)/scale)
+    bbox[1]=int(min(max(0,bbox[1]),width-1)/scale)
+    bbox[2]=int(min(max(0,bbox[2]),height-1)/scale)
+    bbox[3]=int(min(max(0,bbox[3]),width-1)/scale)
+    if bbox[0]>=bbox[2]:
+        if bbox[0]>0:
+            bbox[0]-=1
+        else:   
+            bbox[2]+=1
+    if bbox[1]>=bbox[3]:
+        if bbox[1]>0:
+            bbox[1]-=1
+        else:
+            bbox[3]+=1   
+    return bbox
+def read_config(file):
+    # solve config loading conflict when multi-processes
+    import time
+    while True:
+        config = Config.fromfile(file)
+        if len(config) == 0:
+            time.sleep(0.1)
+            continue
+        break
+    return config
 def initialize(model_name=None):
     from modules import shared
     from modules.shared import cmd_opts
@@ -72,7 +114,7 @@ def initialize(model_name=None):
  
  
 def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=True,use_local=False,
-        llm_path=None,activate=True,use_base=False,base_ratio=0,base_prompt=None,batch_size=1,seed=1234,demo=False,use_personalized=False,cfg=5,steps=20,height=1024,width=1024):
+        llm_path=None,activate=True,use_base=False,base_ratio=0,base_prompt=None,batch_size=1,seed=1234,demo=False,use_personalized=False,cfg=5,steps=20,height=1024,width=1024,use_layer=False,bboxes=None):
      # set model
     import modules.txt2img
     # Prompt for regional diffusion
@@ -80,16 +122,29 @@ def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=Tr
         print('demo')
         regional_prompt=user_prompt
     #TODO: add personalized regional split and regional prompt 
-    else:    
-        input_prompt=user_prompt
-        if use_gpt:
-            assert key is not None
-            params=GPT4(input_prompt,version,key)
-        elif use_local:
-            params=local_llm(input_prompt,version,model_path=llm_path)
-        
-        regional_prompt=params['Regional Prompt']
-        split_ratio=params['split ratio']
+    else:
+        if use_layer:
+            print('use_layer')
+            regional_prompt=user_prompt
+            layer_num=len(bboxes)
+            split_ratio=''
+            for i in range(layer_num):
+                if i<layer_num-1:
+                    split_ratio+=f'1,1; '
+                else:
+                    split_ratio+='1,1'
+            bboxes=[resize_bbox(bbox,height,width) for bbox in bboxes]
+            textprompt=None
+        else:    
+            input_prompt=user_prompt
+            if use_gpt:
+                assert key is not None
+                params, textprompt=GPT4(input_prompt,version,key)
+            elif use_local:
+                params=local_llm(input_prompt,version,model_path=llm_path)
+            
+            regional_prompt=params['Regional Prompt']
+            split_ratio=params['split ratio']
         if use_base:
             if base_prompt is None:
                 regional_prompt= user_prompt+' BREAK\n'+regional_prompt
@@ -102,7 +157,9 @@ def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=Tr
     'split_ratio':split_ratio, # Split ratio for regional diffusion, default is 1,1, which means vertically split the image into two regions with same height and width,
     'base_ratio':base_ratio, # The weight of base prompt
     'use_base':use_base, # Whether to use base prompt
-    'use_common':False # Whether to use common prompt
+    'use_common':False, # Whether to use common prompt
+    'use_layer':use_layer, # Whether to use layered data
+    'bboxes':bboxes, # The bounding box of layered data
     }
     
     image, _, _, _ = modules.txt2img.txt2img(
@@ -135,7 +192,7 @@ def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=Tr
         override_settings_texts=[],
         **regional_settings,
     )
-    return image
+    return image, regional_prompt, split_ratio, textprompt
 def demo_version(demo_list):
         for i in range(len(demo_list)):
                 print('demo_',i)
@@ -182,7 +239,7 @@ def demo_version(demo_list):
                         image[j].save(f"generated_imgs/demo_imgs/{file_name}.png")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--user_prompt', type=str,help='input user prompt')
+    parser.add_argument('--user_prompt', type=str,help='input user prompt', default="")
     parser.add_argument('--model_name', type=str,default='albedobaseXL_v20.safetensors',help='the name of the ckpt, in the folder of models/Stable-diffusion')
     parser.add_argument('--version_number',type=int,default=0, help='the version of the prompt, multi-attribute or complex-object')
     parser.add_argument('--api_key',default=None,type=str,help='the api key of GPT-4 or Gemini-Pro')
@@ -200,7 +257,15 @@ if __name__ == "__main__":
     parser.add_argument('--steps',default=20,type=int,help='the steps of txt2img')
     parser.add_argument('--height',default=1024,type=int,help='the height of the generated image')
     parser.add_argument('--width',default=1024,type=int,help='the width of the generated image')
+    parser.add_argument('--log_json_path',default="outputs/sample.json",type=str,help='json path to log the output image info')
+    parser.add_argument('--layer_data',default="/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b.json",type=str,help='json path for layered data')
     opt = parser.parse_args()
+    config=read_config('test/debug.py')
+    '''--use_base the function of this boolean variable is to activate the base prompt in diffusion process. Utilizing the base prompt signifies that we avoid the direct amalgamation of subregions as the latent representation. Instead, we use a foundational prompt that summarizes the image's key components and obatin the overall structure latent of the image. We then compute the weighted aggregate of these latents to yield the conclusive output. This method is instrumental in addressing the problems like omission of entities in complicated prompt generation tasks, and it also contributes to refining the edges of each subregion, ensuring they are seamlessly integrated and resonate harmony.
+
+    --base_ratio the weight of the base prompt latent, if too small, it is difficult to work, if too big, it will confuse the composition and properties of subregions. We conduct ablation experiment in our paper, see our paper for more detailed information and analysis.'''
+    for key in config.keys():
+        setattr(opt,key,config[key])
     user_prompt=opt.user_prompt #This is what we need in all the situations except for demo
     model_name=opt.model_name #This is what we need in all the situations except for demo
     activate=opt.activate #If you want to try direct generation, set False
@@ -220,6 +285,19 @@ if __name__ == "__main__":
     steps=opt.steps # The steps of txt2img
     height=opt.height
     width=opt.width
+    if opt.layer_data is not None:
+        use_layer=True
+        layer_data=opt.layer_data
+        processed_data=load_inference_data(layer_data)
+        user_prompt=[i['Layer Prompt'] for i in processed_data]
+        bboxes=[i['bboxes'] for i in processed_data]
+        base_prompts=[i['Base Prompt'] for i in processed_data]
+
+    else:
+        use_layer=False
+        layer_data=None
+        bboxes=None
+
     if demo:
         initialize(model_name='albedobaseXL_v20.safetensors')
         demo_version(demo_list)
@@ -229,26 +307,56 @@ if __name__ == "__main__":
         elif use_local:
             appendix='local'
         initialize(model_name=model_name)
-        image=RPG(user_prompt=user_prompt,
-        diffusion_model=model_name,
-        version=version,
-        split_ratio=None,
-        key=api_key,
-        use_gpt=use_gpt,
-        use_local=use_local,
-        llm_path=llm_path,
-        use_base=use_base,
-        base_ratio=base_ratio,
-        base_prompt=base_prompt,
-        batch_size=batch_size,
-        seed=seed,
-        demo=demo,
-        use_personalized=False,
-        cfg=cfg,
-        steps=steps,
-        height=height,
-        width=width)
-        for i in range(len(image)):
-            timestamp = time.strftime('%Y%m%d_%H%M%S')
-            file_name = f"{appendix}_image_{timestamp}.png"
-            image[i].save(f"generated_imgs/{file_name}")
+        if isinstance(user_prompt, str):
+            user_prompts = [user_prompt]
+        elif isinstance(user_prompt, list):
+            user_prompts = user_prompt
+        if not os.path.exists(opt.log_json_path):
+            log_json = {}
+        else:
+            with open(opt.log_json_path, 'r') as f:
+                log_json = json.load(f)
+        
+        for n,user_prompt in enumerate(user_prompts):
+            bbox=bboxes[n] if use_layer else None
+            image,regional_prompt, split_ratio, textprompt=RPG(user_prompt=user_prompt,
+            diffusion_model=model_name,
+            version=version,
+            split_ratio=None,
+            key=api_key,
+            use_gpt=use_gpt,
+            use_local=use_local,
+            llm_path=llm_path,
+            use_base=use_base,
+            base_ratio=base_ratio,
+            base_prompt=base_prompts[n] if use_layer else base_prompt,
+            batch_size=batch_size,
+            seed=seed,
+            demo=demo,
+            use_personalized=False,
+            cfg=cfg,
+            steps=steps,
+            height=height,
+            width=width,
+            use_layer=use_layer,
+            bboxes=bbox
+            )
+            for i in range(len(image)):
+                if use_layer:
+                    file_name = f"{n}.png"
+                    os.makedirs(f"generated_imgs/multi_layers_base_{base_ratio}", exist_ok=True)
+                    image_path = f"generated_imgs/multi_layers_base_{base_ratio}/{file_name}"
+                    image[i].save(image_path)
+                else:
+                    timestamp = time.strftime('%Y%m%d_%H%M%S')
+                    file_name = f"{appendix}_image_{timestamp}.png"
+                    image_path = f"generated_imgs/{file_name}"
+                    image[i].save(image_path)
+                    item={image_path:{"text_prompt":user_prompt, "regional_prompt":regional_prompt, "split_ratio":split_ratio, "GPTprompt":textprompt}}
+                    log_json.update(item)
+            if not use_layer:
+                with open(opt.log_json_path, 'w') as f:
+                    json.dump(log_json, f, indent=4)
+
+
+

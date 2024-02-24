@@ -1,0 +1,1 @@
+python RPG.py --user_prompt 'A blonde hair girl with black suit and white skirt' --model_name 'dreamshaperXL_turboDpmppSDE' --version_number 0 --api_key 'oaip_FVObatuUKrwbktgmyhlCFLQxiAreiNaC' --use_gpt
