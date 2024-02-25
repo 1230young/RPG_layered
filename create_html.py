@@ -92,7 +92,7 @@ def convert_rgb_to_names(rgb_tuple):
 # ann_path = '/openseg_blob/liuzeyu/datasets2/test_font_byt5_100_color_and_font.json'
 # ann_path = '/openseg_blob/liuzeyu/datasets2/typo_clip_data/typoclip_onebox_200-400_simplefont_100k_multibox_val.json'
 # ann_path = '/openseg_blob/liuzeyu/datasets2/canva_ann_json/canva_font_byt5_400_val.json'
-data=load_inference_data('inference/images_100_autocaption_34b.json')
+data=load_inference_data('inference/images_100_autocaption_34b-newer.json')
 # data = data[:100]
 
 # ann_path = '/openseg_blob/liuzeyu/datasets2/canva_ann_json/font_30k_subset.json'
@@ -133,36 +133,42 @@ print("""
 #             <p> Col1: gt </p>
 #         </div>
 # """)
-print(f"""
-        <div class="row">
-            <p> Col1: before tune multibox text </p>
-        </div>
-""")
-print(f"""
-        <div class="row">
-            <p> Col2: after tune multibox text </p>
-        </div>
-""")
+# print(f"""
+#         <div class="row">
+#             <p> Col1: before tune multibox text </p>
+#         </div>
+# """)
+# print(f"""
+#         <div class="row">
+#             <p> Col2: after tune multibox text </p>
+#         </div>
+# """)
 
 
 print(f"<p>{len(data)}</p>")
 # folder_list = [
 #     'yuyang/code/RPG/multi_layers',
-#     'v-sirui/temporary/2024-02-21/Process/images'
+#     '
 # ]
-
+json_file='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b-newer.json'
+with open(json_file, 'r') as f:
+    meta = json.load(f)
 for index, item in enumerate(data):
     file_prefix = f"https://openseg.blob.core.windows.net/openseg-aml/"
     file_sufix = "?sv=2021-10-04&st=2023-11-28T03%3A59%3A26Z&se=2024-11-29T03%3A59%3A00Z&sr=c&sp=rl&sig=kgIQ6YOdgXRxY9kO4grRT4Rx2YRZFHv3V3XVauteVkM%3D"
+
+    info=meta[index]
+    
+    print(f"""
+            <div class="row">
+                <p>Index: {index} <br>
+                Base Prompt: {item['Base Prompt']} </p>
+            </div>
+    """)
+    
     if index % 1 == 0:
         print('<div class="row">')
-    folder='yuyang/code/RPG/multi_layers'
-    img_name = f"/{index}.png"
-    print(f"""
-            <div class="column">
-                <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                <p>RPG </p>
-            </div>""")
+    
     folder='v-sirui/temporary/2024-02-21/Process/images'
     img_name = f"/{index}_whole.png"
     print(f"""
@@ -170,15 +176,68 @@ for index, item in enumerate(data):
                 <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
                 <p>GT </p>
             </div>""")
+    folder='yuyang/code/RPG/multi_layers'
+    img_name = f"/{index}.png"
+    print(f"""
+            <div class="column">
+                <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+                <p>RPG no base no whole </p>
+            </div>""")
+    folder='yuyang/code/RPG/multi_layers_base_0.0'
+    img_name = f"/{index}.png"
+    print(f"""
+            <div class="column">
+                <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+                <p>RPG base 0</p>
+            </div>""")
+    folder='yuyang/code/RPG/multi_layers_base_0.1'
+    img_name = f"/{index}.png"
+    print(f"""
+            <div class="column">
+                <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+                <p>RPG  base 0.1</p>
+            </div>""")
+    folder='yuyang/code/RPG/multi_layers_base_0.2'
+    img_name = f"/{index}.png"
+    print(f"""
+            <div class="column">
+                <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+                <p>RPG base 0.2</p>
+            </div>""")
+    
 
     if index % 1 == 0:
         print('</div>')
+
+
+    
+    count=0
+    print('<div class="row">')
+    for layer in info['layers']:
+        layer_caption=layer['caption']
+        img_path=layer['path'].replace('/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/','yuyang/code/RPG/bboxes/')
+        print(f"""
+            <div class="column">
+                <img src="{file_prefix + img_path + file_sufix}" alt="image" style="max-width: 100%;">
+                <p>{layer_caption}</p>
+            </div>""")
+        count+=1
+        if count==4:
+            print('</div>')
+            print('<div class="row">')
+            count=0
+    base_caption=info['base_image']['caption']
+    img_path=info['base_image']['path'].replace('/openseg_blob/','')
     print(f"""
-            <div class="row">
-                <p>Index: {index} <br>
-                {item['Layer Prompt']} </p>
-            </div>
-    """)
+            <div class="column">
+                <img src="{file_prefix + img_path + file_sufix}" alt="image" style="max-width: 100%;">
+                <p>{base_caption}</p>
+            </div>""")
+
+    print('</div>')
+
+
+    
     # print(f"""
     #         <div class="row">
     #             <p>Index: {index} <br>

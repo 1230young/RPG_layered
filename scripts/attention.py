@@ -147,6 +147,33 @@ def hook_forward(self, module):
             
             i = 0
             outb = None
+
+            #for debug, check the demo in bboxes mode
+            # self.use_layer = True
+            # self.bboxes=[]
+            # sumout = 0
+            # for drow in self.aratios:
+            #     sumin = 0
+            #     for dcell in drow.cols:
+            #         addout = 0
+            #         addin = 0
+            #         sumin = sumin + int(dsin*dcell.ed) - int(dsin*dcell.st)
+            #         if dcell.ed >= 0.999:
+            #             addin = sumin - dsin
+            #             sumout = sumout + int(dsout*drow.ed) - int(dsout*drow.st)
+            #             if drow.ed >= 0.999:
+            #                 addout = sumout - dsout
+            #         if "Horizontal" in self.mode:
+            #             self.bboxes.append([int(dsh*drow.st) + addout,int(dsw*dcell.st) + addin,int(dsh*drow.ed),int(dsw*dcell.ed)])
+            #         elif "Vertical" in self.mode:
+            #             self.bboxes.append([int(dsh*dcell.st) + addin,int(dsw*drow.st) + addout,int(dsh*dcell.ed),int(dsw*drow.ed)])
+
+                    
+
+
+            #end of debug
+
+
             if self.usebase:
                 context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
                 # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
@@ -172,7 +199,7 @@ def hook_forward(self, module):
             db(self,[r for r in self.aratios])
             if self.use_layer:
                 ox = torch.zeros_like(x).reshape(x.size()[0], dsh, dsw, x.size()[2])
-                for i in range(len(self.bboxes)):
+                for j in range(len(self.bboxes)):
                     context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
                     # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
                     cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
@@ -187,7 +214,7 @@ def hook_forward(self, module):
                         db(self,"return out for NP")
                         return out
                     out = out.reshape(out.size()[0], dsh, dsw, out.size()[2]) # convert to main shape.
-                    ox[:,self.bboxes[i][0]:self.bboxes[i][2],self.bboxes[i][1]:self.bboxes[i][3],:] = out[:,self.bboxes[i][0]:self.bboxes[i][2],self.bboxes[i][1]:self.bboxes[i][3],:]
+                    ox[:,self.bboxes[j][0]:self.bboxes[j][2],self.bboxes[j][1]:self.bboxes[j][3],:] = out[:,self.bboxes[j][0]:self.bboxes[j][2],self.bboxes[j][1]:self.bboxes[j][3],:]
 
                     i+=1
 

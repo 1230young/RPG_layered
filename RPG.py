@@ -28,10 +28,10 @@ def resize_bbox(bbox, height, width, source_height=1457, source_width=1457, scal
     """
     bbox = [bbox[0] * height / source_height, bbox[1] * width / source_width,
             bbox[2] * height / source_height, bbox[3] * width / source_width]
-    bbox[0]=int(min(max(0,bbox[0]),height-1)/scale)
-    bbox[1]=int(min(max(0,bbox[1]),width-1)/scale)
-    bbox[2]=int(min(max(0,bbox[2]),height-1)/scale)
-    bbox[3]=int(min(max(0,bbox[3]),width-1)/scale)
+    bbox[0]=int(min(max(0,bbox[0]),height)/scale)
+    bbox[1]=int(min(max(0,bbox[1]),width)/scale)
+    bbox[2]=int(min(max(0,bbox[2]),height)/scale)
+    bbox[3]=int(min(max(0,bbox[3]),width)/scale)
     if bbox[0]>=bbox[2]:
         if bbox[0]>0:
             bbox[0]-=1
@@ -121,6 +121,7 @@ def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=Tr
     if demo:
         print('demo')
         regional_prompt=user_prompt
+        textprompt=None
     #TODO: add personalized regional split and regional prompt 
     else:
         if use_layer:
@@ -214,7 +215,7 @@ def demo_version(demo_list):
                 steps=demo['steps']
                 height=demo['height']
                 width=demo['width']
-                image=RPG(user_prompt=user_prompt,
+                image, _, _, _ =RPG(user_prompt=user_prompt,
                 diffusion_model=model_name,
                 version=version,
                 split_ratio=demo['Split_ratio'],
