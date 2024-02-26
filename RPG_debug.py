@@ -138,7 +138,7 @@ def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=Tr
             textprompt=None
 
             #for debug
-            # batch_size=layer_num
+            batch_size=1
             #debug end
         else:    
             input_prompt=user_prompt
@@ -298,6 +298,7 @@ if __name__ == "__main__":
         bboxes=[i['bboxes'] for i in processed_data]
         base_prompts=[i['Base Prompt'] for i in processed_data]
 
+
     else:
         use_layer=False
         layer_data=None
@@ -323,43 +324,48 @@ if __name__ == "__main__":
                 log_json = json.load(f)
         
         for n,user_prompt in enumerate(user_prompts):
-            bbox=bboxes[n] if use_layer else None
-            image,regional_prompt, split_ratio, textprompt=RPG(user_prompt=user_prompt,
-            diffusion_model=model_name,
-            version=version,
-            split_ratio=None,
-            key=api_key,
-            use_gpt=use_gpt,
-            use_local=use_local,
-            llm_path=llm_path,
-            use_base=use_base,
-            base_ratio=base_ratio,
-            base_prompt=base_prompts[n] if use_layer else base_prompt,
-            batch_size=batch_size,
-            seed=seed,
-            demo=demo,
-            use_personalized=False,
-            cfg=cfg,
-            steps=steps,
-            height=height,
-            width=width,
-            use_layer=use_layer,
-            bboxes=bbox
-            )
-            l=len(image)
-            for i in range(len(image)):
-                if use_layer:
-                    file_name = f"{n}.png"
-                    os.makedirs(f"generated_imgs/multi_layers_resize_base_{base_ratio}", exist_ok=True)
-                    image_path = f"generated_imgs/multi_layers_resize_base_{base_ratio}/{file_name}"
-                    image[i].save(image_path)
-                else:
-                    timestamp = time.strftime('%Y%m%d_%H%M%S')
-                    file_name = f"{appendix}_image_{timestamp}.png"
-                    image_path = f"generated_imgs/{file_name}"
-                    image[i].save(image_path)
-                    item={image_path:{"text_prompt":user_prompt, "regional_prompt":regional_prompt, "split_ratio":split_ratio, "GPTprompt":textprompt}}
-                    log_json.update(item)
+            user_prompt=user_prompt.split("\n")[:len(bboxes[n])]
+            l=len(user_prompt)
+            for j,u in enumerate(user_prompt):
+                if j==0:
+                    continue
+                bbox=[bboxes[n][0],bboxes[n][j]] if use_layer else None
+                image,regional_prompt, split_ratio, textprompt=RPG(user_prompt=user_prompt[0]+"\n"+u,
+                diffusion_model=model_name,
+                version=version,
+                split_ratio=None,
+                key=api_key,
+                use_gpt=use_gpt,
+                use_local=use_local,
+                llm_path=llm_path,
+                use_base=use_base,
+                base_ratio=base_ratio,
+                base_prompt=base_prompts[n] if use_layer else base_prompt,
+                batch_size=batch_size,
+                seed=seed,
+                demo=demo,
+                use_personalized=False,
+                cfg=cfg,
+                steps=steps,
+                height=height,
+                width=width,
+                use_layer=use_layer,
+                bboxes=bbox
+                )
+                
+                for i in range(len(image)):
+                    if use_layer:
+                        file_name = f"{n}_{l-j-1}.png"
+                        os.makedirs(f"generated_imgs/multi_layers_base_{base_ratio}_debug_layers", exist_ok=True)
+                        image_path = f"generated_imgs/multi_layers_base_{base_ratio}_debug_layers/{file_name}"
+                        image[i].save(image_path)
+                    else:
+                        timestamp = time.strftime('%Y%m%d_%H%M%S')
+                        file_name = f"{appendix}_image_{timestamp}.png"
+                        image_path = f"generated_imgs/{file_name}"
+                        image[i].save(image_path)
+                        item={image_path:{"text_prompt":user_prompt, "regional_prompt":regional_prompt, "split_ratio":split_ratio, "GPTprompt":textprompt}}
+                        log_json.update(item)
             if not use_layer:
                 with open(opt.log_json_path, 'w') as f:
                     json.dump(log_json, f, indent=4)

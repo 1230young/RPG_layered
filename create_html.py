@@ -215,7 +215,8 @@ for index, item in enumerate(data):
     print('<div class="row">')
     for layer in info['layers']:
         layer_caption=layer['caption']
-        img_path=layer['path'].replace('/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/','yuyang/code/RPG/bboxes/')
+        img_path=layer['path'].replace('/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/','yuyang/code/RPG/layers/')
+        img_path=img_path.replace('_box','')
         print(f"""
             <div class="column">
                 <img src="{file_prefix + img_path + file_sufix}" alt="image" style="max-width: 100%;">

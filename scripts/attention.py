@@ -128,6 +128,7 @@ def hook_forward(self, module):
             dsh = int(xs / dsw)
 
         contexts = context.clone()
+        
 
         # SBM Matrix mode.
         def matsepcalc(x,contexts,mask,pn,divide):
@@ -147,6 +148,28 @@ def hook_forward(self, module):
             
             i = 0
             outb = None
+
+            if self.bboxes[0][2]!=dsh or self.bboxes[0][3]!=dsw:
+                bboxes=[]
+                scale_h=float(dsh)/self.bboxes[0][2]
+                scale_w=float(dsw)/self.bboxes[0][3]
+                for bbox in self.bboxes:
+                    bbox_resize=[int(bbox[0]*scale_h),int(bbox[1]*scale_w),int(bbox[2]*scale_h),int(bbox[3]*scale_w)]
+                    if bbox_resize[0]>=bbox_resize[2]:
+                        if bbox_resize[0]>0:
+                            bbox_resize[0]-=1
+                        else:   
+                            bbox_resize[2]+=1
+                    if bbox_resize[1]>=bbox_resize[3]:
+                        if bbox_resize[1]>0:
+                            bbox_resize[1]-=1
+                        else:
+                            bbox_resize[3]+=1  
+                    bboxes.append(bbox_resize)
+                    
+
+            else:
+                bboxes=self.bboxes
 
             #for debug, check the demo in bboxes mode
             # self.use_layer = True
@@ -172,63 +195,14 @@ def hook_forward(self, module):
 
 
             #end of debug
-
-
-            if self.usebase:
-                context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
-                # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
-                cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
-                if cnet_ext > 0:
-                    context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
-                    
-                negpip = negpipdealer(i,pn)
-
-                i = i + 1
-
-                out = main_forward(module, x, context, mask, divide, self.isvanilla,userpp =True,step = self.step, isxl = self.isxl, negpip = negpip)
-
-                if len(self.nt) == 1 and not pn:
-                    db(self,"return out for NP")
-                    return out
-                # if self.usebase:
-                outb = out.clone()
-                outb = outb.reshape(outb.size()[0], dsh, dsw, outb.size()[2]) if "Ran" not in self.mode else outb
-
-            sumout = 0
-            db(self,f"tokens : {tll},pn : {pn}")
-            db(self,[r for r in self.aratios])
-            if self.use_layer:
+            
+            #for debug, generate different layers
+            debug=False
+            if debug:
+                i=0
                 ox = torch.zeros_like(x).reshape(x.size()[0], dsh, dsw, x.size()[2])
-                for j in range(len(self.bboxes)):
-                    context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
-                    # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
-                    cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
-                    if cnet_ext > 0:
-                        context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
-                        
-                    negpip = negpipdealer(i,pn)
-
-                    db(self,f"tokens : {tll[i][0]*TOKENSCON}-{tll[i][1]*TOKENSCON}")
-                    out = main_forward(module, x, context, mask, divide, self.isvanilla,userpp = self.pn, step = self.step, isxl = self.isxl,negpip = negpip)
-                    if len(self.nt) == 1 and not pn:
-                        db(self,"return out for NP")
-                        return out
-                    out = out.reshape(out.size()[0], dsh, dsw, out.size()[2]) # convert to main shape.
-                    ox[:,self.bboxes[j][0]:self.bboxes[j][2],self.bboxes[j][1]:self.bboxes[j][3],:] = out[:,self.bboxes[j][0]:self.bboxes[j][2],self.bboxes[j][1]:self.bboxes[j][3],:]
-
-                    i+=1
-
-                if self.usebase : 
-                    ox = ox * (1 - self.bratios[0][0]) + outb * self.bratios[0][0]
-
-
-
-            else:
-                for drow in self.aratios:
-                    v_states = []
-                    sumin = 0
-                    for dcell in drow.cols:
-                        # Grabs a set of tokens depending on number of unrelated breaks.
+                if self.use_layer:
+                    for j in range(len(bboxes)):
                         context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
                         # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
                         cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
@@ -238,73 +212,157 @@ def hook_forward(self, module):
                         negpip = negpipdealer(i,pn)
 
                         db(self,f"tokens : {tll[i][0]*TOKENSCON}-{tll[i][1]*TOKENSCON}")
-                        i = i + 1 + dcell.breaks
-                        # if i >= contexts.size()[1]: 
-                        #     indlast = True
-
                         out = main_forward(module, x, context, mask, divide, self.isvanilla,userpp = self.pn, step = self.step, isxl = self.isxl,negpip = negpip)
-                        db(self,f" dcell.breaks : {dcell.breaks}, dcell.ed : {dcell.ed}, dcell.st : {dcell.st}")
                         if len(self.nt) == 1 and not pn:
                             db(self,"return out for NP")
                             return out
-                        # Actual matrix split by region.
-                        if "Ran" in self.mode:
-                            v_states.append(out)
-                            continue
-                        
-                        out = out.reshape(out.size()[0], dsh, dsw, out.size()[2]) # convert to main shape.
-                        # if indlast:
-                        addout = 0
-                        addin = 0
-                        sumin = sumin + int(dsin*dcell.ed) - int(dsin*dcell.st)
-                        if dcell.ed >= 0.999:
-                            addin = sumin - dsin
-                            sumout = sumout + int(dsout*drow.ed) - int(dsout*drow.st)
-                            if drow.ed >= 0.999:
-                                addout = sumout - dsout
-                        if "Horizontal" in self.mode:
-                            out = out[:,int(dsh*drow.st) + addout:int(dsh*drow.ed),
-                                        int(dsw*dcell.st) + addin:int(dsw*dcell.ed),:]
-                            if self.debug : print(f"{int(dsh*drow.st) + addout}:{int(dsh*drow.ed)},{int(dsw*dcell.st) + addin}:{int(dsw*dcell.ed)}")
-                            if self.usebase : 
-                                # outb_t = outb[:,:,int(dsw*drow.st):int(dsw*drow.ed),:].clone()
-                                outb_t = outb[:,int(dsh*drow.st) + addout:int(dsh*drow.ed),
-                                                int(dsw*dcell.st) + addin:int(dsw*dcell.ed),:].clone()
-                                out = out * (1 - dcell.base) + outb_t * dcell.base
-                        elif "Vertical" in self.mode: # Cols are the outer list, rows are cells.
-                            out = out[:,int(dsh*dcell.st) + addin:int(dsh*dcell.ed),
-                                    int(dsw*drow.st) + addout:int(dsw*drow.ed),:]
-                            db(self,f"{int(dsh*dcell.st) + addin}:{int(dsh*dcell.ed)}-{int(dsw*drow.st) + addout}:{int(dsw*drow.ed)}")
-                            if self.usebase : 
-                                # outb_t = outb[:,:,int(dsw*drow.st):int(dsw*drow.ed),:].clone()
-                                outb_t = outb[:,int(dsh*dcell.st) + addin:int(dsh*dcell.ed),
-                                            int(dsw*drow.st) + addout:int(dsw*drow.ed),:].clone()
-                                out = out * (1 - dcell.base) + outb_t * dcell.base
-                        db(self,f"sumin:{sumin},sumout:{sumout},dsh:{dsh},dsw:{dsw}")
-                
-                        v_states.append(out)
-                        if self.debug : 
-                            for h in v_states:
-                                print(h.size())
-                                
-                    if "Horizontal" in self.mode:
-                        ox = torch.cat(v_states,dim = 2) # First concat the cells to rows.
-                    elif "Vertical" in self.mode:
-                        ox = torch.cat(v_states,dim = 1) # Cols first mode, concat to cols.
-                    elif "Ran" in self.mode:
-                        if self.usebase:
-                            ox = outb * makerrandman(self.ranbase,dsh,dsw).view(-1, 1)
-                        ox = torch.zeros_like(v_states[0])
-                        for state, filter in zip(v_states, self.ransors):
-                            filter = makerrandman(filter,dsh,dsw)
-                            ox = ox + state * filter.view(-1, 1)
-                        return ox
+                        out = out.reshape(1, dsh, dsw, out.size()[2]) # convert to main shape.
+                        ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]
 
-                    h_states.append(ox)
-                if "Horizontal" in self.mode:
-                    ox = torch.cat(h_states,dim = 1) # Second, concat rows to layer.
-                elif "Vertical" in self.mode:
-                    ox = torch.cat(h_states,dim = 2) # Or cols.
+                        i+=1
+
+
+            else:
+                if self.usebase:
+                    context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
+                    # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
+                    cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
+                    if cnet_ext > 0:
+                        context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
+                        
+                    negpip = negpipdealer(i,pn)
+
+                    i = i + 1
+
+                    out = main_forward(module, x, context, mask, divide, self.isvanilla,userpp =True,step = self.step, isxl = self.isxl, negpip = negpip)
+
+                    if len(self.nt) == 1 and not pn:
+                        db(self,"return out for NP")
+                        return out
+                    # if self.usebase:
+                    outb = out.clone()
+                    outb = outb.reshape(outb.size()[0], dsh, dsw, outb.size()[2]) if "Ran" not in self.mode else outb
+
+
+                sumout = 0
+                db(self,f"tokens : {tll},pn : {pn}")
+                db(self,[r for r in self.aratios])
+                if self.use_layer:
+                    ox = torch.zeros_like(x).reshape(x.size()[0], dsh, dsw, x.size()[2])
+                    for j in range(len(bboxes)):
+                        context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
+                        # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
+                        cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
+                        if cnet_ext > 0:
+                            context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
+                            
+                        negpip = negpipdealer(i,pn)
+
+                        db(self,f"tokens : {tll[i][0]*TOKENSCON}-{tll[i][1]*TOKENSCON}")
+                        out = main_forward(module, x, context, mask, divide, self.isvanilla,userpp = self.pn, step = self.step, isxl = self.isxl,negpip = negpip)
+                        if len(self.nt) == 1 and not pn:
+                            db(self,"return out for NP")
+                            return out
+                        out = out.reshape(out.size()[0], dsh, dsw, out.size()[2]) # convert to main shape.
+                        # Resize, put all the layer latent in the bbox area
+                        out=out.permute(0,3,1,2)
+                        from torchvision.transforms import Resize 
+                        torch_resize=Resize((bboxes[j][2]-bboxes[j][0],bboxes[j][3]-bboxes[j][1]), interpolation = InterpolationMode("nearest"))
+                        out = torch_resize(out)
+                        out=out.permute(0,2,3,1)
+                        ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out
+                        # Resize end
+                        # ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]
+
+                        i+=1
+
+                    if self.usebase : 
+                        ox = ox * (1 - self.bratios[0][0]) + outb * self.bratios[0][0]
+
+
+
+                else:
+                    for drow in self.aratios:
+                        v_states = []
+                        sumin = 0
+                        for dcell in drow.cols:
+                            # Grabs a set of tokens depending on number of unrelated breaks.
+                            context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
+                            # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
+                            cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
+                            if cnet_ext > 0:
+                                context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
+                                
+                            negpip = negpipdealer(i,pn)
+
+                            db(self,f"tokens : {tll[i][0]*TOKENSCON}-{tll[i][1]*TOKENSCON}")
+                            i = i + 1 + dcell.breaks
+                            # if i >= contexts.size()[1]: 
+                            #     indlast = True
+
+                            out = main_forward(module, x, context, mask, divide, self.isvanilla,userpp = self.pn, step = self.step, isxl = self.isxl,negpip = negpip)
+                            db(self,f" dcell.breaks : {dcell.breaks}, dcell.ed : {dcell.ed}, dcell.st : {dcell.st}")
+                            if len(self.nt) == 1 and not pn:
+                                db(self,"return out for NP")
+                                return out
+                            # Actual matrix split by region.
+                            if "Ran" in self.mode:
+                                v_states.append(out)
+                                continue
+                            
+                            out = out.reshape(out.size()[0], dsh, dsw, out.size()[2]) # convert to main shape.
+                            # if indlast:
+                            addout = 0
+                            addin = 0
+                            sumin = sumin + int(dsin*dcell.ed) - int(dsin*dcell.st)
+                            if dcell.ed >= 0.999:
+                                addin = sumin - dsin
+                                sumout = sumout + int(dsout*drow.ed) - int(dsout*drow.st)
+                                if drow.ed >= 0.999:
+                                    addout = sumout - dsout
+                            if "Horizontal" in self.mode:
+                                out = out[:,int(dsh*drow.st) + addout:int(dsh*drow.ed),
+                                            int(dsw*dcell.st) + addin:int(dsw*dcell.ed),:]
+                                if self.debug : print(f"{int(dsh*drow.st) + addout}:{int(dsh*drow.ed)},{int(dsw*dcell.st) + addin}:{int(dsw*dcell.ed)}")
+                                if self.usebase : 
+                                    # outb_t = outb[:,:,int(dsw*drow.st):int(dsw*drow.ed),:].clone()
+                                    outb_t = outb[:,int(dsh*drow.st) + addout:int(dsh*drow.ed),
+                                                    int(dsw*dcell.st) + addin:int(dsw*dcell.ed),:].clone()
+                                    out = out * (1 - dcell.base) + outb_t * dcell.base
+                            elif "Vertical" in self.mode: # Cols are the outer list, rows are cells.
+                                out = out[:,int(dsh*dcell.st) + addin:int(dsh*dcell.ed),
+                                        int(dsw*drow.st) + addout:int(dsw*drow.ed),:]
+                                db(self,f"{int(dsh*dcell.st) + addin}:{int(dsh*dcell.ed)}-{int(dsw*drow.st) + addout}:{int(dsw*drow.ed)}")
+                                if self.usebase : 
+                                    # outb_t = outb[:,:,int(dsw*drow.st):int(dsw*drow.ed),:].clone()
+                                    outb_t = outb[:,int(dsh*dcell.st) + addin:int(dsh*dcell.ed),
+                                                int(dsw*drow.st) + addout:int(dsw*drow.ed),:].clone()
+                                    out = out * (1 - dcell.base) + outb_t * dcell.base
+                            db(self,f"sumin:{sumin},sumout:{sumout},dsh:{dsh},dsw:{dsw}")
+                    
+                            v_states.append(out)
+                            if self.debug : 
+                                for h in v_states:
+                                    print(h.size())
+                                    
+                        if "Horizontal" in self.mode:
+                            ox = torch.cat(v_states,dim = 2) # First concat the cells to rows.
+                        elif "Vertical" in self.mode:
+                            ox = torch.cat(v_states,dim = 1) # Cols first mode, concat to cols.
+                        elif "Ran" in self.mode:
+                            if self.usebase:
+                                ox = outb * makerrandman(self.ranbase,dsh,dsw).view(-1, 1)
+                            ox = torch.zeros_like(v_states[0])
+                            for state, filter in zip(v_states, self.ransors):
+                                filter = makerrandman(filter,dsh,dsw)
+                                ox = ox + state * filter.view(-1, 1)
+                            return ox
+
+                        h_states.append(ox)
+                    if "Horizontal" in self.mode:
+                        ox = torch.cat(h_states,dim = 1) # Second, concat rows to layer.
+                    elif "Vertical" in self.mode:
+                        ox = torch.cat(h_states,dim = 2) # Or cols.
             ox = ox.reshape(x.size()[0],x.size()[1],x.size()[2]) # Restore to 3d source.  
             return ox
 

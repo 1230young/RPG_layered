@@ -12,9 +12,9 @@ def load_inference_data(json_file='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster
             if n!=layer_num-1:
                 layer_prompt+=layer['caption']+' BREAK\n'
             else:
-                layer_prompt+=layer['caption']
+                layer_prompt+=layer['caption']+' BREAK\n'#debug
         layer_prompt=item['base_image']['caption']+' BREAK\n'+layer_prompt
-        bboxes=[layer["top_left"]+layer["bottom_right"] for layer in item['layers']]
+        bboxes=[[layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]] for layer in item['layers']]
         bboxes.insert(0,[0,0,1457,1457])
         index=item['index']
         base_prompt=item['whole_image']['caption']
