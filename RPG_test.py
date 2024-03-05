@@ -13,7 +13,7 @@ from template.demo import demo_list
 import time
 from mmcv import Config
 import json
-from inference_data import load_inference_data
+from inference_data import load_inference_data, load_test_data
 def resize_bbox(bbox, height, width, source_height=1457, source_width=1457, scale=16):
     """
     Resize bounding box from source image to target image
@@ -26,6 +26,9 @@ def resize_bbox(bbox, height, width, source_height=1457, source_width=1457, scal
     Returns:
         list: [top, left, bottom, right]
     """
+    l=len(bbox)
+    if l==8:
+        target_bbox=resize_bbox(bbox[4:], height, width, source_height=1024, source_width=1024, scale=16)
     bbox = [bbox[0] * height / source_height, bbox[1] * width / source_width,
             bbox[2] * height / source_height, bbox[3] * width / source_width]
     bbox[0]=int(min(max(0,bbox[0]),height)/scale)
@@ -41,7 +44,9 @@ def resize_bbox(bbox, height, width, source_height=1457, source_width=1457, scal
         if bbox[1]>0:
             bbox[1]-=1
         else:
-            bbox[3]+=1   
+            bbox[3]+=1  
+    if l!=len(bbox):
+        bbox+=target_bbox 
     return bbox
 def read_config(file):
     # solve config loading conflict when multi-processes
@@ -138,7 +143,7 @@ def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=Tr
             textprompt=None
 
             #for debug
-            batch_size=1
+            # batch_size=layer_num
             #debug end
         else:    
             input_prompt=user_prompt
@@ -263,7 +268,7 @@ if __name__ == "__main__":
     parser.add_argument('--height',default=1024,type=int,help='the height of the generated image')
     parser.add_argument('--width',default=1024,type=int,help='the width of the generated image')
     parser.add_argument('--log_json_path',default="outputs/sample.json",type=str,help='json path to log the output image info')
-    parser.add_argument('--layer_data',default="/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b.json",type=str,help='json path for layered data')
+    parser.add_argument('--layer_data',default="/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/test.json",type=str,help='json path for layered data')
     opt = parser.parse_args()
     config=read_config('test/debug.py')
     '''--use_base the function of this boolean variable is to activate the base prompt in diffusion process. Utilizing the base prompt signifies that we avoid the direct amalgamation of subregions as the latent representation. Instead, we use a foundational prompt that summarizes the image's key components and obatin the overall structure latent of the image. We then compute the weighted aggregate of these latents to yield the conclusive output. This method is instrumental in addressing the problems like omission of entities in complicated prompt generation tasks, and it also contributes to refining the edges of each subregion, ensuring they are seamlessly integrated and resonate harmony.
@@ -293,11 +298,10 @@ if __name__ == "__main__":
     if opt.layer_data is not None:
         use_layer=True
         layer_data=opt.layer_data
-        processed_data=load_inference_data(layer_data)
+        processed_data=load_test_data(layer_data)
         user_prompt=[i['Layer Prompt'] for i in processed_data]
         bboxes=[i['bboxes'] for i in processed_data]
         base_prompts=[i['Base Prompt'] for i in processed_data]
-
 
     else:
         use_layer=False
@@ -324,53 +328,47 @@ if __name__ == "__main__":
                 log_json = json.load(f)
         
         for n,user_prompt in enumerate(user_prompts):
-            user_prompt=user_prompt.split(" BREAK\n")[:len(bboxes[n])]
-            l=len(user_prompt)
-            
-            for j,u in enumerate(user_prompt):
-                if j==0:
-                    continue
-                if use_base:
-                    base_prompt=base_prompts[n] if use_layer else base_prompt
+            if use_base:
+                base_prompt=base_prompts[n] if use_layer else base_prompt
+            else:
+                base_prompt=None
+            bbox=bboxes[n] if use_layer else None
+            image,regional_prompt, split_ratio, textprompt=RPG(user_prompt=user_prompt,
+            diffusion_model=model_name,
+            version=version,
+            split_ratio=None,
+            key=api_key,
+            use_gpt=use_gpt,
+            use_local=use_local,
+            llm_path=llm_path,
+            use_base=use_base,
+            base_ratio=base_ratio,
+            base_prompt='',
+            batch_size=batch_size,
+            seed=seed,
+            demo=demo,
+            use_personalized=False,
+            cfg=cfg,
+            steps=steps,
+            height=height,
+            width=width,
+            use_layer=use_layer,
+            bboxes=bbox
+            )
+            l=len(image)
+            for i in range(len(image)):
+                if use_layer:
+                    file_name = f"{n}.png"
+                    os.makedirs(f"generated_imgs/test_noinput_base_null", exist_ok=True)
+                    image_path = f"generated_imgs/test_noinput_base_null/{file_name}"
+                    image[i].save(image_path)
                 else:
-                    base_prompt=None
-                bbox=[bboxes[n][0],bboxes[n][j]] if use_layer else None
-                image,regional_prompt, split_ratio, textprompt=RPG(user_prompt=u+" BREAK\n",
-                diffusion_model=model_name,
-                version=version,
-                split_ratio=None,
-                key=api_key,
-                use_gpt=use_gpt,
-                use_local=use_local,
-                llm_path=llm_path,
-                use_base=use_base,
-                base_ratio=base_ratio,
-                base_prompt=base_prompt,
-                batch_size=batch_size,
-                seed=seed,
-                demo=demo,
-                use_personalized=False,
-                cfg=cfg,
-                steps=steps,
-                height=height,
-                width=width,
-                use_layer=use_layer,
-                bboxes=bbox
-                )
-                
-                for i in range(len(image)):
-                    if use_layer:
-                        file_name = f"{n}_{l-j-1}.png"
-                        os.makedirs(f"generated_imgs/multi_layers_base_{base_ratio}_debug_layers", exist_ok=True)
-                        image_path = f"generated_imgs/multi_layers_base_{base_ratio}_debug_layers/{file_name}"
-                        image[i].save(image_path)
-                    else:
-                        timestamp = time.strftime('%Y%m%d_%H%M%S')
-                        file_name = f"{appendix}_image_{timestamp}.png"
-                        image_path = f"generated_imgs/{file_name}"
-                        image[i].save(image_path)
-                        item={image_path:{"text_prompt":user_prompt, "regional_prompt":regional_prompt, "split_ratio":split_ratio, "GPTprompt":textprompt}}
-                        log_json.update(item)
+                    timestamp = time.strftime('%Y%m%d_%H%M%S')
+                    file_name = f"{appendix}_image_{timestamp}.png"
+                    image_path = f"generated_imgs/{file_name}"
+                    image[i].save(image_path)
+                    item={image_path:{"text_prompt":user_prompt, "regional_prompt":regional_prompt, "split_ratio":split_ratio, "GPTprompt":textprompt}}
+                    log_json.update(item)
             if not use_layer:
                 with open(opt.log_json_path, 'w') as f:
                     json.dump(log_json, f, indent=4)

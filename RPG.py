@@ -13,7 +13,7 @@ from template.demo import demo_list
 import time
 from mmcv import Config
 import json
-from inference_data import load_inference_data
+from inference_data import load_inference_data, draw_bbox
 def resize_bbox(bbox, height, width, source_height=1457, source_width=1457, scale=16):
     """
     Resize bounding box from source image to target image
@@ -114,7 +114,7 @@ def initialize(model_name=None):
  
  
 def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=True,use_local=False,
-        llm_path=None,activate=True,use_base=False,base_ratio=0,base_prompt=None,batch_size=1,seed=1234,demo=False,use_personalized=False,cfg=5,steps=20,height=1024,width=1024,use_layer=False,bboxes=None):
+        llm_path=None,activate=True,use_base=False,base_ratio=0,base_prompt=None,batch_size=1,seed=1234,demo=False,use_personalized=False,cfg=5,steps=20,height=1024,width=1024,use_layer=False,bboxes=None,sampler_index=0):
      # set model
     import modules.txt2img
     # Prompt for regional diffusion
@@ -173,7 +173,7 @@ def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=Tr
         negative_prompt="",
         prompt_styles=[],
         steps=steps,
-        sampler_index=0,
+        sampler_index=sampler_index,
         restore_faces=False,
         tiling=False,
         n_iter=1,
@@ -321,48 +321,67 @@ if __name__ == "__main__":
         else:
             with open(opt.log_json_path, 'r') as f:
                 log_json = json.load(f)
-        
-        for n,user_prompt in enumerate(user_prompts):
-            bbox=bboxes[n] if use_layer else None
-            image,regional_prompt, split_ratio, textprompt=RPG(user_prompt=user_prompt,
-            diffusion_model=model_name,
-            version=version,
-            split_ratio=None,
-            key=api_key,
-            use_gpt=use_gpt,
-            use_local=use_local,
-            llm_path=llm_path,
-            use_base=use_base,
-            base_ratio=base_ratio,
-            base_prompt=base_prompts[n] if use_layer else base_prompt,
-            batch_size=batch_size,
-            seed=seed,
-            demo=demo,
-            use_personalized=False,
-            cfg=cfg,
-            steps=steps,
-            height=height,
-            width=width,
-            use_layer=use_layer,
-            bboxes=bbox
-            )
-            l=len(image)
-            for i in range(len(image)):
-                if use_layer:
-                    file_name = f"{n}.png"
-                    os.makedirs(f"generated_imgs/multi_layers_resize_base_{base_ratio}", exist_ok=True)
-                    image_path = f"generated_imgs/multi_layers_resize_base_{base_ratio}/{file_name}"
-                    image[i].save(image_path)
+        for sampler_index in [2]:
+        # for cfg in [18]:
+            directory = f"multi_layers_base_{base_ratio}_sampler_{sampler_index}"
+            
+            for n,user_prompt in enumerate(user_prompts):
+                bbox=bboxes[n] if use_layer else None
+                if use_base:
+                    base_prompt=base_prompts[n] if use_layer else base_prompt
                 else:
-                    timestamp = time.strftime('%Y%m%d_%H%M%S')
-                    file_name = f"{appendix}_image_{timestamp}.png"
-                    image_path = f"generated_imgs/{file_name}"
-                    image[i].save(image_path)
-                    item={image_path:{"text_prompt":user_prompt, "regional_prompt":regional_prompt, "split_ratio":split_ratio, "GPTprompt":textprompt}}
-                    log_json.update(item)
-            if not use_layer:
-                with open(opt.log_json_path, 'w') as f:
-                    json.dump(log_json, f, indent=4)
+                    base_prompt=None
+                image,regional_prompt, split_ratio, textprompt=RPG(user_prompt=user_prompt,
+                diffusion_model=model_name,
+                version=version,
+                split_ratio=None,
+                key=api_key,
+                use_gpt=use_gpt,
+                use_local=use_local,
+                llm_path=llm_path,
+                use_base=use_base,
+                base_ratio=base_ratio,
+                base_prompt=base_prompt,
+                batch_size=batch_size,
+                seed=seed,
+                demo=demo,
+                use_personalized=False,
+                cfg=cfg,
+                steps=steps,
+                height=height,
+                width=width,
+                use_layer=use_layer,
+                bboxes=bbox,
+                sampler_index=sampler_index
+                )
+                l=len(image)
+                target_dirs=["generated_imgs","/pyy/openseg_blob/yuyang/code/RPG"]
+                for tar_dir in target_dirs:
+                    for i in range(len(image)):
+                        if use_layer:
+                            file_name = f"{n}.png"
+                            path=f"{directory}/{file_name}"
+                            os.makedirs(f"{tar_dir}/{directory}", exist_ok=True)
+                            image[i].save(f"{tar_dir}/{path}")
+                        else:
+                            timestamp = time.strftime('%Y%m%d_%H%M%S')
+                            file_name = f"{appendix}_image_{timestamp}.png"
+                            image_path = f"generated_imgs/{file_name}"
+                            image[i].save(image_path)
+                            item={image_path:{"text_prompt":user_prompt, "regional_prompt":regional_prompt, "split_ratio":split_ratio, "GPTprompt":textprompt}}
+                            log_json.update(item)
+
+                    if not use_layer:
+                        with open(opt.log_json_path, 'w') as f:
+                            json.dump(log_json, f, indent=4)
+
+            data_draw_bbox=load_inference_data()
+            for item_draw_bbox in data_draw_bbox:
+                index=item_draw_bbox['index']
+                draw_bboxes=item_draw_bbox['bboxes']
+                source_dir=target_dirs[-1]+"/"+directory
+                target_dir=source_dir+"_bbox"
+                draw_bbox(index,draw_bboxes,source_dir,target_dir)
 
 
 

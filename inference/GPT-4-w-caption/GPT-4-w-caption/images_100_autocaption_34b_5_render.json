@@ -1,0 +1,635 @@
+[
+ {
+  "index": 53,
+  "input": [
+   {
+    "layer_num": 0,
+    "image_size": [
+     914,
+     316
+    ],
+    "caption": "The image contains a text-based graphic with the phrase \"I am right where I should be\" written in a cursive, pink font. The text is arranged in a curved, arched shape, and it is the central focus of the image. The background is not described as it is not relevant to the content of the text."
+   },
+   {
+    "layer_num": 1,
+    "image_size": [
+     607,
+     155
+    ],
+    "caption": "The image contains a text-based graphic with the phrase \"at this moment\" written in a stylized, cursive font. The text is colored in a shade of pink and appears to be slightly distorted or warped, giving it a three-dimensional effect. The background of the image is black, which contrasts with the pink text, making it stand out prominently. The text is the central focus of the image, and there are no other objects or elements present. The style of the image is reminiscent of a digital or graphic design, with a modern and artistic feel."
+   },
+   {
+    "layer_num": 2,
+    "image_size": [
+     605,
+     687
+    ],
+    "caption": "The image features a stylized illustration of a floral arrangement. There are two prominent flowers, each with a pink petal pattern and a yellow center, which could be interpreted as the flowers' reproductive organs. The flowers are set against a dark background, which makes them stand out. Surrounding the flowers are decorative elements, including purple and orange leaves, and a red and orange abstract shape that could be interpreted as a stylized flower or a decorative motif. Additionally, there is a small, colorful butterfly with a patterned wing, positioned above the flowers, adding a sense of movement and life to the composition. The overall style of the image is vibrant and playful, with a clear emphasis on the floral theme."
+   }
+  ],
+  "output": [
+   {
+    "layer_num": 0,
+    "top_left": [
+     258,
+     199
+    ],
+    "bottom_right": [
+     1172,
+     515
+    ]
+   },
+   {
+    "layer_num": 1,
+    "top_left": [
+     426,
+     1129
+    ],
+    "bottom_right": [
+     1033,
+     1284
+    ]
+   },
+   {
+    "layer_num": 2,
+    "top_left": [
+     426,
+     380
+    ],
+    "bottom_right": [
+     1031,
+     1067
+    ]
+   }
+  ],
+  "path": [
+   {
+    "layer_num": 0,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/53_box_0.png"
+   },
+   {
+    "layer_num": 1,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/53_box_1.png"
+   },
+   {
+    "layer_num": 2,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/53_box_2.png"
+   }
+  ],
+  "gpt_output": [
+   {
+    "layer_num": 0,
+    "top_left": [
+     271,
+     570
+    ],
+    "bottom_right": [
+     1185,
+     886
+    ]
+   },
+   {
+    "layer_num": 1,
+    "top_left": [
+     424,
+     1045
+    ],
+    "bottom_right": [
+     1031,
+     1200
+    ]
+   },
+   {
+    "layer_num": 2,
+    "top_left": [
+     425,
+     384
+    ],
+    "bottom_right": [
+     1030,
+     1071
+    ]
+   }
+  ]
+ },
+ {
+  "index": 78,
+  "input": [
+   {
+    "layer_num": 0,
+    "image_size": [
+     516,
+     56
+    ],
+    "caption": "The image contains a text that reads \"UP TO 50% OFF\". The text is in a bold, sans-serif font and is colored in a dark shade, possibly black or dark purple. The background of the image is not described as it is not relevant to the content of the text. The text is the main focus of the image and is presented in a straightforward manner without any additional graphics or embellishments. The text is centered and occupies the majority of the space within the image. The style of the image is simple and direct, with a clear emphasis on the promotional message conveyed by the text."
+   },
+   {
+    "layer_num": 1,
+    "image_size": [
+     1010,
+     135
+    ],
+    "caption": "The image contains the text \"Ramadan Sale\" in a stylized font. The text is the central focus of the image, and it appears to be a promotional message related to a sale event during the month of Ramadan. The font is decorative, with a slight slant to the right, and the color of the text is a deep, rich purple. The background of the image is not visible, as the focus is solely on the text. The style of the image suggests it could be used for advertising or promotional purposes, possibly for a sale event related to the Islamic holy month of Ramadan."
+   },
+   {
+    "layer_num": 2,
+    "image_size": [
+     979,
+     806
+    ],
+    "caption": "The image features a woman standing in front of a white wall. She is wearing a long, light-colored coat with a belt at the waist, and a matching headscarf. The woman is holding a large, patterned scarf over her head, which appears to be a part of her outfit. She has a neutral expression on her face and is looking directly at the camera. To her right, there is a vase with dried flowers. The overall style of the image suggests it might be a fashion or lifestyle photograph."
+   }
+  ],
+  "output": [
+   {
+    "layer_num": 0,
+    "top_left": [
+     471,
+     1237
+    ],
+    "bottom_right": [
+     987,
+     1293
+    ]
+   },
+   {
+    "layer_num": 1,
+    "top_left": [
+     226,
+     183
+    ],
+    "bottom_right": [
+     1236,
+     318
+    ]
+   },
+   {
+    "layer_num": 2,
+    "top_left": [
+     238,
+     372
+    ],
+    "bottom_right": [
+     1217,
+     1178
+    ]
+   }
+  ],
+  "path": [
+   {
+    "layer_num": 0,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/78_box_0.png"
+   },
+   {
+    "layer_num": 1,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/78_box_1.png"
+   },
+   {
+    "layer_num": 2,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/78_box_2.png"
+   }
+  ],
+  "gpt_output": [
+   {
+    "layer_num": 0,
+    "top_left": [
+     470,
+     1230
+    ],
+    "bottom_right": [
+     986,
+     1286
+    ]
+   },
+   {
+    "layer_num": 1,
+    "top_left": [
+     223,
+     1105
+    ],
+    "bottom_right": [
+     1233,
+     1240
+    ]
+   },
+   {
+    "layer_num": 2,
+    "top_left": [
+     238,
+     325
+    ],
+    "bottom_right": [
+     1217,
+     1131
+    ]
+   }
+  ]
+ },
+ {
+  "index": 83,
+  "input": [
+   {
+    "layer_num": 0,
+    "image_size": [
+     949,
+     58
+    ],
+    "caption": "The image contains a text message that reads \"let's respect each other, especially women.\" The text is displayed in a pinkish-red color with a slight gradient, giving it a three-dimensional appearance. The text is arranged in a horizontal line, and the font is sans-serif, which is modern and clean. The background of the image is black, which contrasts with the text, making it stand out. The overall style of the image is simple and straightforward, with the focus being on the message conveyed by the text."
+   },
+   {
+    "layer_num": 1,
+    "image_size": [
+     454,
+     69
+    ],
+    "caption": "The image contains a single word, \"international,\" written in a cursive font. The text is colored in a shade of pink and is the central focus of the image. The background is not visible, as the entire image is filled with the word \"international.\" The text is clear and legible, with no additional elements or objects present. The style of the image is simple and straightforward, with the focus solely on the written word."
+   },
+   {
+    "layer_num": 2,
+    "image_size": [
+     1093,
+     150
+    ],
+    "caption": "The image features the text \"WOMEN'S DAY\" prominently displayed in a large, bold, and slightly italicized font. The text is colored in a soft, pastel shade of pink, which stands out against the black background. The font has a playful and informal style, with the letters appearing to be hand-drawn or hand-lettered, giving the text a casual and approachable feel. The overall design is simple and focused on the message it conveys, celebrating Women's Day."
+   },
+   {
+    "layer_num": 3,
+    "image_size": [
+     1457,
+     813
+    ],
+    "caption": "The image is a colorful illustration featuring five stylized female figures. Each figure has exaggerated features, such as large hair and brightly colored clothing. The figures are arranged in a row, with each one slightly overlapping the one in front of her, creating a sense of depth.\n\nStarting from the left, the first figure has blonde hair with pink flowers and butterflies, and she is wearing a pink top. The second figure has dark blue hair with a blue flower, and she is wearing a green top. The third figure has pink hair with a pink flower, and she is wearing a yellow top. The fourth figure has purple hair with a purple flower, and she is wearing a purple top with a pink scarf. The fifth figure has dark brown hair with a brown flower, and she is wearing an orange top with a pink scarf.\n\nAll figures are smiling and appear to be waving, with their hands raised near their faces. The background is plain black, which contrasts with the vibrant colors of the figures. There are no texts or additional elements in the image. The style of the illustration is cartoonish and whimsical, with a focus on bright colors and playful designs."
+   }
+  ],
+  "output": [
+   {
+    "layer_num": 0,
+    "top_left": [
+     253,
+     434
+    ],
+    "bottom_right": [
+     1202,
+     492
+    ]
+   },
+   {
+    "layer_num": 1,
+    "top_left": [
+     484,
+     156
+    ],
+    "bottom_right": [
+     938,
+     225
+    ]
+   },
+   {
+    "layer_num": 2,
+    "top_left": [
+     181,
+     248
+    ],
+    "bottom_right": [
+     1274,
+     398
+    ]
+   },
+   {
+    "layer_num": 3,
+    "top_left": [
+     -1,
+     644
+    ],
+    "bottom_right": [
+     1456,
+     1457
+    ]
+   }
+  ],
+  "path": [
+   {
+    "layer_num": 0,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/83_box_0.png"
+   },
+   {
+    "layer_num": 1,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/83_box_1.png"
+   },
+   {
+    "layer_num": 2,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/83_box_2.png"
+   },
+   {
+    "layer_num": 3,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/83_box_3.png"
+   }
+  ],
+  "gpt_output": [
+   {
+    "layer_num": 0,
+    "top_left": [
+     253,
+     1330
+    ],
+    "bottom_right": [
+     1202,
+     1388
+    ]
+   },
+   {
+    "layer_num": 1,
+    "top_left": [
+     501,
+     1235
+    ],
+    "bottom_right": [
+     955,
+     1304
+    ]
+   },
+   {
+    "layer_num": 2,
+    "top_left": [
+     181,
+     1080
+    ],
+    "bottom_right": [
+     1274,
+     1230
+    ]
+   },
+   {
+    "layer_num": 3,
+    "top_left": [
+     0,
+     0
+    ],
+    "bottom_right": [
+     1457,
+     813
+    ]
+   }
+  ]
+ },
+ {
+  "index": 88,
+  "input": [
+   {
+    "layer_num": 0,
+    "image_size": [
+     290,
+     41
+    ],
+    "caption": "The image contains a text-based graphic with the phrase \"@reallygreatsite\" displayed in a stylized font. The text is primarily in a dark color, possibly black or dark gray, with the '@' symbol in a lighter shade, possibly white or light gray. The font has a modern and somewhat playful design, with varying line thicknesses and a slight slant to the letters. The background of the image is not visible, as the focus is solely on the text. The overall style of the image is minimalistic and appears to be a digital creation, possibly for a social media profile or a website."
+   },
+   {
+    "layer_num": 1,
+    "image_size": [
+     179,
+     39
+    ],
+    "caption": "The image contains the word \"February\" written in a cursive font. The text is in a dark color, possibly black, and is set against a light background. The style of the font suggests a casual or artistic approach, rather than a formal or technical one. The word \"February\" is the only visible text in the image, and there are no other objects or elements present. The image does not contain any additional context or information beyond the text itself."
+   },
+   {
+    "layer_num": 2,
+    "image_size": [
+     478,
+     151
+    ],
+    "caption": "The image contains a text that reads \"NATIONAL LASH DAY\". The text is arranged in a curved fashion, with the words \"NATIONAL\" and \"DAY\" at the top and bottom respectively, and \"LASH\" in the middle. The font is bold and white, which stands out against the black background. The text is the only visible element in the image."
+   },
+   {
+    "layer_num": 3,
+    "image_size": [
+     423,
+     423
+    ],
+    "caption": "The image displays a solid, circular shape with a smooth, wavy edge. The color of the shape is a soft, pastel pink. The background is not visible, as the focus is solely on the pink shape. There are no texts, objects, or other elements within the image. The style of the image is simple and minimalistic, with a clean and uncluttered appearance."
+   }
+  ],
+  "output": [
+   {
+    "layer_num": 0,
+    "top_left": [
+     583,
+     1181
+    ],
+    "bottom_right": [
+     873,
+     1222
+    ]
+   },
+   {
+    "layer_num": 1,
+    "top_left": [
+     619,
+     1107
+    ],
+    "bottom_right": [
+     798,
+     1146
+    ]
+   },
+   {
+    "layer_num": 2,
+    "top_left": [
+     489,
+     874
+    ],
+    "bottom_right": [
+     967,
+     1025
+    ]
+   },
+   {
+    "layer_num": 3,
+    "top_left": [
+     516,
+     952
+    ],
+    "bottom_right": [
+     939,
+     1375
+    ]
+   }
+  ],
+  "path": [
+   {
+    "layer_num": 0,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/88_box_0.png"
+   },
+   {
+    "layer_num": 1,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/88_box_1.png"
+   },
+   {
+    "layer_num": 2,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/88_box_2.png"
+   },
+   {
+    "layer_num": 3,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/88_box_3.png"
+   }
+  ],
+  "gpt_output": [
+   {
+    "layer_num": 0,
+    "top_left": [
+     583,
+     1225
+    ],
+    "bottom_right": [
+     873,
+     1266
+    ]
+   },
+   {
+    "layer_num": 1,
+    "top_left": [
+     639,
+     1160
+    ],
+    "bottom_right": [
+     818,
+     1199
+    ]
+   },
+   {
+    "layer_num": 2,
+    "top_left": [
+     489,
+     1000
+    ],
+    "bottom_right": [
+     967,
+     1151
+    ]
+   },
+   {
+    "layer_num": 3,
+    "top_left": [
+     516,
+     517
+    ],
+    "bottom_right": [
+     939,
+     940
+    ]
+   }
+  ]
+ },
+ {
+  "index": 97,
+  "input": [
+   {
+    "layer_num": 0,
+    "image_size": [
+     455,
+     27
+    ],
+    "caption": "The image appears to be a close-up of a textured surface, possibly a wall or a piece of fabric. The texture is composed of vertical lines and horizontal lines that intersect each other, creating a grid-like pattern. The lines are thin and closely spaced, giving the surface a uniform appearance. The color of the surface is dark, with shades of black and gray, which suggests that the image might be taken in low light conditions or that the surface is a dark color. There are no texts or other objects in the image. The focus is solely on the texture of the surface."
+   },
+   {
+    "layer_num": 1,
+    "image_size": [
+     509,
+     115
+    ],
+    "caption": "The image contains the text \"DAY17\" in a bold, sans-serif font. The text is centered and occupies the majority of the space within the image. The background is not visible, as the focus is solely on the text. The color of the text is a dark shade, possibly black or a very dark gray, which stands out against the lighter background. The font size is large, making the text easily readable. The style of the image is simple and straightforward, with no additional graphics or embellishments. The overall impression is that of a clean, minimalist design."
+   },
+   {
+    "layer_num": 2,
+    "image_size": [
+     359,
+     133
+    ],
+    "caption": "The image features a logo with the text \"RAMADAN KAREEM\" prominently displayed. The text is written in a combination of Arabic and English script. The Arabic script is larger and more ornate, with a flowing, cursive style, while the English text is smaller and more straightforward. The color of the text is a golden hue, which stands out against the black background. The overall design is simple yet elegant, with a clear focus on the festive greeting for the month of Ramadan."
+   }
+  ],
+  "output": [
+   {
+    "layer_num": 0,
+    "top_left": [
+     592,
+     834
+    ],
+    "bottom_right": [
+     1047,
+     861
+    ]
+   },
+   {
+    "layer_num": 1,
+    "top_left": [
+     539,
+     699
+    ],
+    "bottom_right": [
+     1048,
+     814
+    ]
+   },
+   {
+    "layer_num": 2,
+    "top_left": [
+     617,
+     523
+    ],
+    "bottom_right": [
+     976,
+     656
+    ]
+   }
+  ],
+  "path": [
+   {
+    "layer_num": 0,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/97_box_0.png"
+   },
+   {
+    "layer_num": 1,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/97_box_1.png"
+   },
+   {
+    "layer_num": 2,
+    "path": "/openseg_blob/v-sirui/temporary/2024-02-21/Process/images/97_box_2.png"
+   }
+  ],
+  "gpt_output": [
+   {
+    "layer_num": 0,
+    "top_left": [
+     500,
+     1215
+    ],
+    "bottom_right": [
+     955,
+     1242
+    ]
+   },
+   {
+    "layer_num": 1,
+    "top_left": [
+     473,
+     1050
+    ],
+    "bottom_right": [
+     982,
+     1165
+    ]
+   },
+   {
+    "layer_num": 2,
+    "top_left": [
+     548,
+     917
+    ],
+    "bottom_right": [
+     907,
+     1050
+    ]
+   }
+  ]
+ }
+]

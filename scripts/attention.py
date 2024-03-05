@@ -87,11 +87,16 @@ def main_forward(module,x,context,mask,divide,isvanilla = False,userpp = False,t
 
 def hook_forwards(self, root_module: torch.nn.Module, remove=False):
     self.hooked = True if not remove else False
+    self.attncount=0
+    self.remove_count=0
     for name, module in root_module.named_modules():
         if "attn2" in name and module.__class__.__name__ == "CrossAttention":
             module.forward = hook_forward(self, module)
+            self.attncount += 1
             if remove:
                 del module.forward
+                self.remove_count += 1
+
 
 ################################################################################
 ##### Attention mode 
@@ -143,7 +148,12 @@ def hook_forward(self, module):
             elif "Vertical" in self.mode:
                 dsout = dsh
                 dsin = dsw
+            # if pn:
+            #     tll = self.pt
+            # else:
 
+            #     tll = self.nt
+                # tll[0] = self.pt[0] if len(self.nt) == 1 else self.nt[0]
             tll = self.pt if pn else self.nt
             
             i = 0
@@ -165,7 +175,24 @@ def hook_forward(self, module):
                             bbox_resize[1]-=1
                         else:
                             bbox_resize[3]+=1  
+                    #for test
+                    if len(bbox)==8:
+                        target_bbox_resize=[int(bbox[4]*scale_h),int(bbox[5]*scale_w),int(bbox[6]*scale_h),int(bbox[7]*scale_w)]
+                        if target_bbox_resize[0]>=target_bbox_resize[2]:
+                            if target_bbox_resize[0]>0:
+                                target_bbox_resize[0]-=1
+                            else:   
+                                target_bbox_resize[2]+=1
+                        if target_bbox_resize[1]>=target_bbox_resize[3]:
+                            if target_bbox_resize[1]>0:
+                                target_bbox_resize[1]-=1
+                            else:
+                                target_bbox_resize[3]+=1  
+                        bbox_resize=bbox_resize+target_bbox_resize
+
+                    #test end
                     bboxes.append(bbox_resize)
+                
                     
 
             else:
@@ -203,6 +230,7 @@ def hook_forward(self, module):
                 ox = torch.zeros_like(x).reshape(x.size()[0], dsh, dsw, x.size()[2])
                 if self.use_layer:
                     for j in range(len(bboxes)):
+                        
                         context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
                         # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
                         cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
@@ -217,7 +245,8 @@ def hook_forward(self, module):
                             db(self,"return out for NP")
                             return out
                         out = out.reshape(1, dsh, dsw, out.size()[2]) # convert to main shape.
-                        ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]
+                        # ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]
+                        ox=out
 
                         i+=1
 
@@ -242,7 +271,7 @@ def hook_forward(self, module):
                     # if self.usebase:
                     outb = out.clone()
                     outb = outb.reshape(outb.size()[0], dsh, dsw, outb.size()[2]) if "Ran" not in self.mode else outb
-
+                    
 
                 sumout = 0
                 db(self,f"tokens : {tll},pn : {pn}")
@@ -265,14 +294,15 @@ def hook_forward(self, module):
                             return out
                         out = out.reshape(out.size()[0], dsh, dsw, out.size()[2]) # convert to main shape.
                         # Resize, put all the layer latent in the bbox area
-                        out=out.permute(0,3,1,2)
-                        from torchvision.transforms import Resize 
-                        torch_resize=Resize((bboxes[j][2]-bboxes[j][0],bboxes[j][3]-bboxes[j][1]), interpolation = InterpolationMode("nearest"))
-                        out = torch_resize(out)
-                        out=out.permute(0,2,3,1)
-                        ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out
+                        # out = out[:,bboxes[j][4]:bboxes[j][6],bboxes[j][5]:bboxes[j][7],:]
+                        # out=out.permute(0,3,1,2)
+                        # from torchvision.transforms import Resize 
+                        # torch_resize=Resize((bboxes[j][2]-bboxes[j][0],bboxes[j][3]-bboxes[j][1]), interpolation = InterpolationMode("nearest"))
+                        # out = torch_resize(out)
+                        # out=out.permute(0,2,3,1)
+                        # ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out
                         # Resize end
-                        # ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]
+                        ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]
 
                         i+=1
 
@@ -548,7 +578,7 @@ def hook_forward(self, module):
 
         self.count += 1
 
-        limit = 70 if self.isxl else 16
+        limit =70 if self.isxl else 16
 
         if self.count == limit:
             self.pn = not self.pn

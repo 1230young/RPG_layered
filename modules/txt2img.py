@@ -15,7 +15,10 @@ def txt2img(id_task: str, prompt: str, negative_prompt: str, prompt_styles, step
             height: int, width: int, enable_hr: bool, denoising_strength: float, hr_scale: float, hr_upscaler: str,
             hr_second_pass_steps: int, hr_resize_x: int, hr_resize_y: int, override_settings_texts, **kwargs):
 
+
     override_settings = create_override_settings_dict(override_settings_texts)
+    for i in sd_samplers.samplers:
+        print(i.name)
  
     p = StableDiffusionProcessingTxt2Img(
         sd_model=shared.sd_model,

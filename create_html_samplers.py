@@ -154,6 +154,8 @@ print(f"<p>{len(data)}</p>")
 #     'yuyang/code/RPG/multi_layers',
 #     '
 # ]
+
+samplers_group=["DPM++ 2M Karras","DPM++ SDE Karras","DPM++ 2M SDE Exponential","DPM++ 2M SDE Karras","Euler a","Euler","LMS","Heun","DPM2","DPM2 a","DPM++ 2S a","DPM++ 2M","DPM++ SDE","DPM++ 2M SDE","DPM++ 2M SDE Heun","DPM++ 2M SDE Heun Karras","DPM++ 2M SDE Heun Exponential","DPM++ 3M SDE","DPM++ 3M SDE Karras","DPM++ 3M SDE Exponential","DPM fast","DPM adaptive","LMS Karras","DPM2 Karras","DPM2 a Karras","DPM++ 2S a Karras","Restart","DDIM","PLMS","UniPC"]
 json_file='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b-newer.json'
 with open(json_file, 'r') as f:
     meta = json.load(f)
@@ -192,6 +194,9 @@ for group in group_index:
                     <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
                     <p>GT bbox</p>
                 </div>""")
+        print('</div>')
+        print('<div class="row">')
+
         # print('</div>')
         # print('<div class="row">')
         # folder='yuyang/code/RPG/multi_layers'
@@ -215,20 +220,23 @@ for group in group_index:
         #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
         #             <p>RPG base 0 bbox</p>
         #         </div>""")
-        folder='yuyang/code/RPG/multi_layers_base_0.2'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>RPG base ratio=0.2</p>
-                </div>""")
-        folder='yuyang/code/RPG/multi_layers_base_0.2_bbox'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>RPG base ratio=0.2 bbox</p>
-                </div>""")
+        for n,sampler in enumerate(samplers_group):
+            if sampler!="DPM++ 2M Karras":
+                folder=f'yuyang/code/RPG/multi_layers_base_0.1_sampler_{n}'
+            else:
+                folder=f'yuyang/code/RPG/multi_layers_base_0.1'
+            img_name = f"/{index}.png"
+            print(f"""
+                    <div class="column">
+                        <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+                        <p>RPG base ratio=0.1, sampler={sampler}</p>
+                    </div>""")
+            if n%6==0:
+                print('</div>')
+                print('<div class="row">')
+            
+
+    
         
         # folder='yuyang/code/RPG/multi_layers_resize_base_0.0'
         # img_name = f"/{index}.png"
@@ -254,50 +262,7 @@ for group in group_index:
         #             <p>RPG base ratio=1 (=totally using SDXL)</p>
         #         </div>""")
         
-        folder='yuyang/code/RPG/CoT-GPT-4-0229'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4\nRPG base ratio=0</p>
-                </div>""")
-        folder='yuyang/code/RPG/CoT-GPT-4-0229_bbox'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4 bbox</p>
-                </div>""")
-        print('</div>')
-        print('<div class="row">')
-        folder='yuyang/code/RPG/CoT-GPT-4-0229-ratio'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4 given bbox h-w ratio\nRPG base ratio=0</p>
-                </div>""")
-        folder='yuyang/code/RPG/CoT-GPT-4-0229-ratio_bbox'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4 given bbox h-w ratio bbox</p>
-                </div>""")
-        folder='yuyang/code/RPG/CoT-GPT-4-0229-nowidth'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4 not given h w\nRPG base ratio=0</p>
-                </div>""")
-        folder='yuyang/code/RPG/CoT-GPT-4-0229-nowidth_bbox'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4 not given h w bbox</p>
-                </div>""")
+        
         
 
         if index % 1 == 0:

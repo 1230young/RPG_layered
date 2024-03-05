@@ -154,6 +154,7 @@ print(f"<p>{len(data)}</p>")
 #     'yuyang/code/RPG/multi_layers',
 #     '
 # ]
+cfg_group=[3,5,7,9,12,15,18]
 json_file='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b-newer.json'
 with open(json_file, 'r') as f:
     meta = json.load(f)
@@ -192,6 +193,8 @@ for group in group_index:
                     <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
                     <p>GT bbox</p>
                 </div>""")
+        print('</div>')
+        print('<div class="row">')
         # print('</div>')
         # print('<div class="row">')
         # folder='yuyang/code/RPG/multi_layers'
@@ -215,20 +218,19 @@ for group in group_index:
         #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
         #             <p>RPG base 0 bbox</p>
         #         </div>""")
-        folder='yuyang/code/RPG/multi_layers_base_0.2'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>RPG base ratio=0.2</p>
-                </div>""")
-        folder='yuyang/code/RPG/multi_layers_base_0.2_bbox'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>RPG base ratio=0.2 bbox</p>
-                </div>""")
+        for cfg in cfg_group:
+            if cfg!=5:
+                folder=f'yuyang/code/RPG/multi_layers_base_0.1_cfg_{cfg}'
+            else:
+                folder=f'yuyang/code/RPG/multi_layers_base_0.1'
+            img_name = f"/{index}.png"
+            print(f"""
+                    <div class="column">
+                        <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+                        <p>RPG base ratio=0.1, CFG={cfg}</p>
+                    </div>""")
+
+    
         
         # folder='yuyang/code/RPG/multi_layers_resize_base_0.0'
         # img_name = f"/{index}.png"
@@ -254,50 +256,7 @@ for group in group_index:
         #             <p>RPG base ratio=1 (=totally using SDXL)</p>
         #         </div>""")
         
-        folder='yuyang/code/RPG/CoT-GPT-4-0229'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4\nRPG base ratio=0</p>
-                </div>""")
-        folder='yuyang/code/RPG/CoT-GPT-4-0229_bbox'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4 bbox</p>
-                </div>""")
-        print('</div>')
-        print('<div class="row">')
-        folder='yuyang/code/RPG/CoT-GPT-4-0229-ratio'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4 given bbox h-w ratio\nRPG base ratio=0</p>
-                </div>""")
-        folder='yuyang/code/RPG/CoT-GPT-4-0229-ratio_bbox'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4 given bbox h-w ratio bbox</p>
-                </div>""")
-        folder='yuyang/code/RPG/CoT-GPT-4-0229-nowidth'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4 not given h w\nRPG base ratio=0</p>
-                </div>""")
-        folder='yuyang/code/RPG/CoT-GPT-4-0229-nowidth_bbox'
-        img_name = f"/{index}.png"
-        print(f"""
-                <div class="column">
-                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-                    <p>layout planning:CoT-GPT-4 not given h w bbox</p>
-                </div>""")
+        
         
 
         if index % 1 == 0:
