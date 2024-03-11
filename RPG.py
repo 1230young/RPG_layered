@@ -53,7 +53,7 @@ def read_config(file):
             continue
         break
     return config
-def initialize(model_name=None):
+def initialize(model_name=None, lora_path=None):
     from modules import shared
     from modules.shared import cmd_opts
     
@@ -104,7 +104,9 @@ def initialize(model_name=None):
     print('txt2img_scripts',modules.scripts.scripts_txt2img.scripts)
  
     try:
-        modules.sd_models.load_model(model_name=model_name)
+        modules.sd_models.load_model(model_name=model_name, lora_path=lora_path)
+        #load lora
+        temp=0
     except Exception as e:
         errors.display(e, "loading stable diffusion model")
         print("", file=sys.stderr)
@@ -264,6 +266,7 @@ if __name__ == "__main__":
     parser.add_argument('--width',default=1024,type=int,help='the width of the generated image')
     parser.add_argument('--log_json_path',default="outputs/sample.json",type=str,help='json path to log the output image info')
     parser.add_argument('--layer_data',default="/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b.json",type=str,help='json path for layered data')
+    parser.add_argument('--lora_path',default=None,type=str,help='lora path')
     opt = parser.parse_args()
     config=read_config('test/debug.py')
     '''--use_base the function of this boolean variable is to activate the base prompt in diffusion process. Utilizing the base prompt signifies that we avoid the direct amalgamation of subregions as the latent representation. Instead, we use a foundational prompt that summarizes the image's key components and obatin the overall structure latent of the image. We then compute the weighted aggregate of these latents to yield the conclusive output. This method is instrumental in addressing the problems like omission of entities in complicated prompt generation tasks, and it also contributes to refining the edges of each subregion, ensuring they are seamlessly integrated and resonate harmony.
@@ -311,7 +314,7 @@ if __name__ == "__main__":
             appendix='gpt4'
         elif use_local:
             appendix='local'
-        initialize(model_name=model_name)
+        initialize(model_name=model_name, lora_path=opt.lora_path)
         if isinstance(user_prompt, str):
             user_prompts = [user_prompt]
         elif isinstance(user_prompt, list):
@@ -321,9 +324,9 @@ if __name__ == "__main__":
         else:
             with open(opt.log_json_path, 'r') as f:
                 log_json = json.load(f)
-        for sampler_index in [2]:
+        for sampler_index in [0]:
         # for cfg in [18]:
-            directory = f"multi_layers_base_{base_ratio}_sampler_{sampler_index}"
+            directory = f"multi_layers_base_{base_ratio}_cfg_{cfg}_DPM_adaptive"
             
             for n,user_prompt in enumerate(user_prompts):
                 bbox=bboxes[n] if use_layer else None

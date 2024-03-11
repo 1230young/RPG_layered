@@ -50,5 +50,22 @@
     "nchangeand": false,
     "lnter": "0",
     "lnur": "0"
+  },
+  {
+    "name": "lastrun",
+    "mode": "Columns",
+    "ratios": "1,1; 1,1; 1,1; 1,1; 1,1; 1,1; 1,1; 1,1; 1,1; 1,1; 1,1",
+    "baseratios": 0.1,
+    "usebase": true,
+    "usecom": false,
+    "usencom": false,
+    "calcmode": "Attention",
+    "nchangeand": [
+      false
+    ],
+    "lnter": 0,
+    "lnur": 0,
+    "threshold": 0.4,
+    "polymask": null
   }
 ]

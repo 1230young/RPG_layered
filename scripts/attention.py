@@ -86,16 +86,23 @@ def main_forward(module,x,context,mask,divide,isvanilla = False,userpp = False,t
     return out
 
 def hook_forwards(self, root_module: torch.nn.Module, remove=False):
+    self.allow_selfattn_hook=True
     self.hooked = True if not remove else False
-    self.attncount=0
-    self.remove_count=0
+    self.restrict_selfattn_threshold=10.0*10.0/64/64
+    self.masks={}
+    self.selfattn_cnt=0
     for name, module in root_module.named_modules():
         if "attn2" in name and module.__class__.__name__ == "CrossAttention":
             module.forward = hook_forward(self, module)
-            self.attncount += 1
             if remove:
                 del module.forward
-                self.remove_count += 1
+        # if self.allow_selfattn_hook and "attn1" in name and module.__class__.__name__ == "CrossAttention":
+        #     module.original_forward = module.forward
+        #     module.forward = hook_self_attn_forward(self, module)
+        #     self.selfattn_cnt+=1
+        #     if remove:
+        #         del module.forward
+    print(f"selfattn_cnt:{self.selfattn_cnt}")
 
 
 ################################################################################
@@ -589,6 +596,70 @@ def hook_forward(self, module):
         return ox
 
     return forward
+
+
+def hook_self_attn_forward(self, module):
+    def forward(x, context=None, mask=None, additional_tokens=None, n_times_crossframe_attn_in_self=0):
+        if self.xsize == 0: self.xsize = x.shape[1]
+        if "input" in getattr(module, self.layer_name,""):
+            if x.shape[1] > self.xsize:
+                self.in_hr = True
+
+        height = self.hr_h if self.in_hr and self.hr else self.h 
+        width = self.hr_w if self.in_hr and self.hr else self.w
+
+        xs = x.size()[1]
+        scale = round(math.sqrt(height * width / xs))
+
+        dsh = round(height / scale)
+        dsw = round(width / scale)
+        ha, wa = xs % dsh, xs % dsw
+        if ha == 0:
+            dsw = int(xs / dsh)
+        elif wa == 0:
+            dsh = int(xs / dsw)
+        if dsh!=64 or dsw!=64:
+            return module.original_forward(x, context=context, mask=None, additional_tokens=additional_tokens, n_times_crossframe_attn_in_self=n_times_crossframe_attn_in_self)
+        if str(dsh) in self.masks:
+            mask= self.masks[str(dsh)].to(x.device)
+            return module.original_forward(x, context=context, mask=mask, additional_tokens=additional_tokens, n_times_crossframe_attn_in_self=n_times_crossframe_attn_in_self)
+        else:
+            mask = torch.ones(x.size()[0],x.size()[1],x.size()[1]).to(x.device)
+            if self.bboxes[0][2]!=dsh or self.bboxes[0][3]!=dsw:
+                bboxes=[]
+                scale_h=float(dsh)/self.bboxes[0][2]
+                scale_w=float(dsw)/self.bboxes[0][3]
+                for bbox in self.bboxes:
+                    bbox_resize=[int(bbox[0]*scale_h),int(bbox[1]*scale_w),int(bbox[2]*scale_h),int(bbox[3]*scale_w)]
+                    if bbox_resize[0]>=bbox_resize[2]:
+                        if bbox_resize[0]>0:
+                            bbox_resize[0]-=1
+                        else:   
+                            bbox_resize[2]+=1
+                    if bbox_resize[1]>=bbox_resize[3]:
+                        if bbox_resize[1]>0:
+                            bbox_resize[1]-=1
+                        else:
+                            bbox_resize[3]+=1  
+                    bboxes.append(bbox_resize)
+            else:
+                bboxes=self.bboxes
+
+            for bbox in self.bboxes:
+                if float((bbox[2]-bbox[0])*(bbox[3]-bbox[1]))/dsh/dsw>self.restrict_selfattn_threshold:
+                    continue
+                bbox_tool=torch.zeros(dsh,dsw)
+                bbox_tool[bbox[0]:bbox[2],bbox[1]:bbox[3]]=1
+                bbox_tool=bbox_tool.view(dsh*dsw)
+                bbox_tool=torch.nonzero(bbox_tool).view(-1)
+                mask[:,bbox_tool.tolist(),:]=0
+                mask[:,bbox_tool.tolist(),bbox_tool.tolist()]=1
+            mask=mask.to(x.device).bool()
+            self.masks[str(dsh)] = mask
+            return module.original_forward(x, context=context, mask=mask, additional_tokens=additional_tokens, n_times_crossframe_attn_in_self=n_times_crossframe_attn_in_self)
+    return forward
+         
+
 
 def split_dims(xs, height, width, self = None):
     """Split an attention layer dimension to height + width.

@@ -1,0 +1,12 @@
+{
+    "shape":["square","rectangle","circle","triangle","oval","pentagon","hexagon","diamond","parallelogram","trapezoid","rounded rectangle","semi-circle","quarter-circle"],
+    "fill":["solid","empty"],
+    "color":["red","blue","green","yellow","purple","orange","pink","brown","black","white","gray","darkkhaki", "mediumblue", "wheat", "deeppink", "orangered", "lime", "olivedrab", "goldenrod", "violet", "lightcoral", "indianred", "navy", "gainsboro", "mistyrose", "skyblue", "springgreen", "slategray", "lightgoldenrodyellow", "lightyellow", "palegreen", "maroon", "dimgray", "hotpink", "sandybrown", "indigo", "papayawhip", "peru", "ivory", "peachpuff", "lemonchiffon", "lightsalmon", "gold", "lightblue", "khaki", "mediumaquamarine", "mediumslateblue", "tan", "moccasin", "cyan", "fuchsia", "darkgoldenrod", "paleturquoise", "yellowgreen", "linen", "mediumturquoise", "darkgreen", "darkorange", "palegoldenrod", "turquoise", "firebrick", "darkmagenta", "plum", "palevioletred", "seagreen", "mediumpurple", "saddlebrown", "lavender", "magenta", "teal", "deepskyblue", "darkturquoise", "tomato", "mediumseagreen", "snow", "darksalmon", "sienna", "slateblue", "lightgray", "honeydew", "darkviolet", "midnightblue", "oldlace", "forestgreen", "seashell", "darkseagreen", "mediumspringgreen", "ghostwhite", "lightgreen", "darkslategray", "olive", "dodgerblue", "lightskyblue", "mintcream", "lightseagreen", "navajowhite", "lightslategray", "lightpink", "salmon", "floralwhite", "steelblue", "darkslateblue", "greenyellow", "lavenderblush", "rosybrown", "darkcyan", "limegreen", "royalblue", "powderblue", "aqua", "darkblue", "silver", "mediumorchid", "mediumvioletred", "lightsteelblue", "lawngreen", "thistle", "orchid", "lightcyan", "coral", "darkorchid", "whitesmoke", "darkred", "darkolivegreen"]
+}
+
+
+
+
+
+
+

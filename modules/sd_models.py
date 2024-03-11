@@ -600,7 +600,7 @@ def send_model_to_trash(m):
     devices.torch_gc()
 
 
-def load_model(checkpoint_info=None, already_loaded_state_dict=None,model_name=None):
+def load_model(checkpoint_info=None, already_loaded_state_dict=None,model_name=None,lora_path=None):
     from modules import sd_hijack
     checkpoint_info = checkpoint_info or select_checkpoint(model_name=model_name)
 
@@ -658,6 +658,13 @@ def load_model(checkpoint_info=None, already_loaded_state_dict=None,model_name=N
 
     with sd_disable_initialization.LoadStateDictOnMeta(state_dict, device=model_target_device(sd_model), weight_dtype_conversion=weight_dtype_conversion):
         load_model_weights(sd_model, checkpoint_info, state_dict, timer)
+
+    #load lora weight:
+    if lora_path is not None:
+        from diffusers import AutoPipelineForText2Image
+        pipeline = AutoPipelineForText2Image.from_pretrained("/pyy/yuyang_blob/pyy/code/diffusers/models/albedobaseXL_v20", torch_dtype=devices.dtype_unet).to(model_target_device(sd_model))
+        pipeline.load_lora_weights(lora_path, weight_name="pytorch_lora_weights.safetensors")
+        
     timer.record("load weights from state dict")
 
     send_model_to_device(sd_model)

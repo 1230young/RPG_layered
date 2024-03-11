@@ -393,9 +393,10 @@ def attention_CrossAttention_forward(self, x, context=None, mask=None, **kwargs)
     sim = einsum('b i d, b j d -> b i j', q, k) * self.scale
 
     if mask is not None:
-        mask = rearrange(mask, 'b ... -> b (...)')
+        # mask = rearrange(mask, 'b ... -> b (...)')
         max_neg_value = -torch.finfo(sim.dtype).max
-        mask = repeat(mask, 'b j -> (b h) () j', h=h)
+        mask = repeat(mask, 'b j k-> (b h) j k', h=h)
+        # mask = repeat(mask, 'b j-> (b h) () j', h=h)
         sim.masked_fill_(~mask, max_neg_value)
 
     # attention, what we cannot get enough of

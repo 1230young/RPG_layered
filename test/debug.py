@@ -6,4 +6,6 @@ height=1024
 width=1024
 use_base=True
 base_ratio=0.1
+cfg=7
 layer_data='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b-newer.json'
+lora_path="/pyy/yuyang_blob/pyy/code/diffusers/examples/text_to_image/output/shape_lora/checkpoint-1"
