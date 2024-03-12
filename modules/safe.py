@@ -131,7 +131,7 @@ def load_with_extra(filename, extra_handler=None, *args, **kwargs):
     """
 
     from modules import shared
-
+    shared.cmd_opts.disable_safe_unpickle=True #jump safe check
     try:
         if not shared.cmd_opts.disable_safe_unpickle:
             check_pt(filename, extra_handler)

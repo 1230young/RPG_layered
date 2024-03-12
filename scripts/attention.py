@@ -81,7 +81,12 @@ def main_forward(module,x,context,mask,divide,isvanilla = False,userpp = False,t
 
     out = atm.einsum('b i j, b j d -> b i d', attn, v)
     out = atm.rearrange(out, '(b h) n d -> b n (h d)', h=h)
-    out = module.to_out(out)
+    try:
+        out = module.to_out(out)
+    except:
+        length=len(module.to_out)
+        for i in range(length):
+            out = module.to_out[i](out)
 
     return out
 
@@ -92,7 +97,9 @@ def hook_forwards(self, root_module: torch.nn.Module, remove=False):
     self.masks={}
     self.selfattn_cnt=0
     for name, module in root_module.named_modules():
-        if "attn2" in name and module.__class__.__name__ == "CrossAttention":
+        if "attn2" in name:
+            temp=0
+        if "attn2" in name and (module.__class__.__name__ == "CrossAttention" or module.__class__.__name__ == "Attention"):
             module.forward = hook_forward(self, module)
             if remove:
                 del module.forward

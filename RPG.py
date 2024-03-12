@@ -1,6 +1,10 @@
 import sys
+sys.path.append('/pyy/openseg_blob/yuyang/code/RPG-DiffusionMaster/TypoClipSDXL/typoclip_sdxl')
+sys.path.append('/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/repositories/generative-models/sgm/modules/')
+
 import logging
 import os
+import os.path as osp
 logging.getLogger("xformers").addFilter(lambda record: 'A matching Triton is not available' not in record.getMessage())
 from modules import timer, errors
 import torch
@@ -14,6 +18,8 @@ import time
 from mmcv import Config
 import json
 from inference_data import load_inference_data, draw_bbox
+
+
 def resize_bbox(bbox, height, width, source_height=1457, source_width=1457, scale=16):
     """
     Resize bounding box from source image to target image
@@ -53,7 +59,7 @@ def read_config(file):
             continue
         break
     return config
-def initialize(model_name=None, lora_path=None):
+def initialize(model_name=None, config_dir=None, ckpt_dir=None):
     from modules import shared
     from modules.shared import cmd_opts
     
@@ -104,7 +110,7 @@ def initialize(model_name=None, lora_path=None):
     print('txt2img_scripts',modules.scripts.scripts_txt2img.scripts)
  
     try:
-        modules.sd_models.load_model(model_name=model_name, lora_path=lora_path)
+        modules.sd_models.load_model(model_name=model_name, config_dir=config_dir, ckpt_dir=ckpt_dir)
         #load lora
         temp=0
     except Exception as e:
@@ -112,6 +118,8 @@ def initialize(model_name=None, lora_path=None):
         print("", file=sys.stderr)
         print("Stable diffusion model failed to load, exiting", file=sys.stderr)
         exit(1)
+    
+
     startup_timer.record("load SD checkpoint")
  
  
@@ -266,7 +274,9 @@ if __name__ == "__main__":
     parser.add_argument('--width',default=1024,type=int,help='the width of the generated image')
     parser.add_argument('--log_json_path',default="outputs/sample.json",type=str,help='json path to log the output image info')
     parser.add_argument('--layer_data',default="/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b.json",type=str,help='json path for layered data')
-    parser.add_argument('--lora_path',default=None,type=str,help='lora path')
+    # parser.add_argument('--lora_path',default=None,type=str,help='lora path')
+    parser.add_argument("--config_dir", default=None,type=str)
+    parser.add_argument("--ckpt_dir", default=None, type=str)
     opt = parser.parse_args()
     config=read_config('test/debug.py')
     '''--use_base the function of this boolean variable is to activate the base prompt in diffusion process. Utilizing the base prompt signifies that we avoid the direct amalgamation of subregions as the latent representation. Instead, we use a foundational prompt that summarizes the image's key components and obatin the overall structure latent of the image. We then compute the weighted aggregate of these latents to yield the conclusive output. This method is instrumental in addressing the problems like omission of entities in complicated prompt generation tasks, and it also contributes to refining the edges of each subregion, ensuring they are seamlessly integrated and resonate harmony.
@@ -306,6 +316,7 @@ if __name__ == "__main__":
         layer_data=None
         bboxes=None
 
+
     if demo:
         initialize(model_name='albedobaseXL_v20.safetensors')
         demo_version(demo_list)
@@ -314,7 +325,7 @@ if __name__ == "__main__":
             appendix='gpt4'
         elif use_local:
             appendix='local'
-        initialize(model_name=model_name, lora_path=opt.lora_path)
+        initialize(model_name=model_name, config_dir=opt.config_dir, ckpt_dir=opt.ckpt_dir)
         if isinstance(user_prompt, str):
             user_prompts = [user_prompt]
         elif isinstance(user_prompt, list):
@@ -326,7 +337,7 @@ if __name__ == "__main__":
                 log_json = json.load(f)
         for sampler_index in [0]:
         # for cfg in [18]:
-            directory = f"multi_layers_base_{base_ratio}_cfg_{cfg}_DPM_adaptive"
+            directory = f"multi_layers_glyph_try"
             
             for n,user_prompt in enumerate(user_prompts):
                 bbox=bboxes[n] if use_layer else None
@@ -377,6 +388,7 @@ if __name__ == "__main__":
                     if not use_layer:
                         with open(opt.log_json_path, 'w') as f:
                             json.dump(log_json, f, indent=4)
+                break
 
             data_draw_bbox=load_inference_data()
             for item_draw_bbox in data_draw_bbox:

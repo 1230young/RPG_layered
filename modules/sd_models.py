@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/repositories/generative-models/sgm/modules/')
 import collections
 import os.path
 import sys
@@ -17,6 +19,27 @@ from modules import paths, shared, modelloader, devices, script_callbacks, sd_va
 from modules.timer import Timer
 import tomesd
 import numpy as np
+from torch import nn
+import torch.nn.functional as F
+from peft import LoraConfig
+from peft.utils import set_peft_model_state_dict
+from attention import BasicTransformerBlock
+from TypoClipSDXL.typoclip_sdxl.utils import (
+    parse_config,
+    UNET_CKPT_NAME,
+    huggingface_cache_dir,
+    load_byt5_and_byt5_tokenizer,
+    BYT5_MAPPER_CKPT_NAME,
+    INSERTED_ATTN_CKPT_NAME,
+    BYT5_CKPT_NAME,
+    ATTN_BLOCK_OLD,
+    ATTN_BLOCK_NEW,
+)
+from TypoClipSDXL.typoclip_sdxl.modules import T5EncoderBlockByT5Mapper, IdentityByT5Mapper
+from TypoClipSDXL.typoclip_sdxl.custom_diffusers import (
+    StableDiffusionXLLongPromptBytAttnModifyPipeline,
+    CrossAttnInsertBasicTransformerBlockSGM,
+)
 
 model_dir = "Stable-diffusion/"
 model_path = os.path.abspath(os.path.join(paths.models_path, model_dir))
@@ -26,6 +49,21 @@ checkpoint_aliases = {}
 checkpoint_alisases = checkpoint_aliases  # for compatibility with old name
 checkpoints_loaded = collections.OrderedDict()
 
+
+def replace_lora_keys(para):
+    key=list(para.keys()).copy()
+    idx=0
+    count=0
+    for k in key:
+        while not k.startswith(ATTN_BLOCK_OLD[idx]):
+            idx+=1
+            if idx>=len(ATTN_BLOCK_OLD):
+                break
+        if idx>=len(ATTN_BLOCK_OLD):
+            break
+        para[k.replace(ATTN_BLOCK_OLD[idx], ATTN_BLOCK_NEW[idx])]=para.pop(k)
+        count+=1
+    return para
 
 def replace_key(d, key, new_key, value):
     keys = list(d.keys())
@@ -600,7 +638,7 @@ def send_model_to_trash(m):
     devices.torch_gc()
 
 
-def load_model(checkpoint_info=None, already_loaded_state_dict=None,model_name=None,lora_path=None):
+def load_model(checkpoint_info=None, already_loaded_state_dict=None,model_name=None,config_dir=None, ckpt_dir=None):
     from modules import sd_hijack
     checkpoint_info = checkpoint_info or select_checkpoint(model_name=model_name)
 
@@ -660,10 +698,137 @@ def load_model(checkpoint_info=None, already_loaded_state_dict=None,model_name=N
         load_model_weights(sd_model, checkpoint_info, state_dict, timer)
 
     #load lora weight:
-    if lora_path is not None:
-        from diffusers import AutoPipelineForText2Image
-        pipeline = AutoPipelineForText2Image.from_pretrained("/pyy/yuyang_blob/pyy/code/diffusers/models/albedobaseXL_v20", torch_dtype=devices.dtype_unet).to(model_target_device(sd_model))
-        pipeline.load_lora_weights(lora_path, weight_name="pytorch_lora_weights.safetensors")
+    # if lora_path is not None:
+    #     from diffusers import AutoPipelineForText2Image
+    #     pipeline = AutoPipelineForText2Image.from_pretrained("/pyy/yuyang_blob/pyy/code/diffusers/models/albedobaseXL_v20", torch_dtype=devices.dtype_unet).to(model_target_device(sd_model))
+    #     pipeline.load_lora_weights(lora_path, weight_name="pytorch_lora_weights.safetensors")
+        
+    #load other parts(glyph control)
+    if config_dir is not None:
+        try:
+            config=parse_config(config_dir)
+            inference_dtype = torch.float32
+            if config.inference_dtype == "fp16":
+                inference_dtype = torch.float16
+            elif config.inference_dtype == "bf16":
+                inference_dtype = torch.bfloat16
+            byt5_mapper_dict = [T5EncoderBlockByT5Mapper, IdentityByT5Mapper]
+            byt5_mapper_dict = {mapper.__name__: mapper for mapper in byt5_mapper_dict}
+            byt5_model, byt5_tokenizer = load_byt5_and_byt5_tokenizer(
+                **config.byt5_config
+            )
+            if config.byt5_ckpt_dir is not None and not config.train_byt5:
+                byt5_state_dict = torch.load(config.byt5_ckpt_dir, map_location='cpu')
+                byt5_filter_state_dict = {}
+                for name in byt5_state_dict['state_dict']:
+                    if 'module.text_tower.encoder.' in name:
+                        byt5_filter_state_dict[name[len('module.text_tower.encoder.'):]] = byt5_state_dict['state_dict'][name]
+                byt5_model.load_state_dict(
+                    byt5_filter_state_dict,
+                    strict=True,
+                )
+                del byt5_state_dict
+                del byt5_filter_state_dict
+                print(f"loaded byt5 model from {config.byt5_ckpt_dir}")
+            inserted_new_modules_para_set = set()
+            for name, module in sd_model.model.diffusion_model.named_modules():
+                if name in config.attn_block_to_modify:
+                    temp=0
+                # if isinstance(module, BasicTransformerBlock) and name in config.attn_block_to_modify:
+                    parent_module = sd_model.model.diffusion_model
+                    for n in name.split(".")[:-1]:
+                        parent_module = getattr(parent_module, n)
+                    new_block = CrossAttnInsertBasicTransformerBlockSGM.from_transformer_block(
+                        module,
+                        byt5_model.config.d_model if config.byt5_mapper_config.sdxl_channels is None else config.byt5_mapper_config.sdxl_channels,
+                        config.glyph_attn_insertion_type,
+                        config.glyph_attn_arch_type,
+                    )
+                    new_block.requires_grad_(False)
+                    for inserted_module_name, inserted_module in zip(
+                        new_block.get_inserted_modules_names(), 
+                        new_block.get_inserted_modules()
+                    ):
+                        inserted_module.requires_grad_(True)
+                        for para_name, para in inserted_module.named_parameters():
+                            para_key = name + '.' + inserted_module_name + '.' + para_name
+                            assert para_key not in inserted_new_modules_para_set
+                            inserted_new_modules_para_set.add(para_key)
+                    for origin_module in new_block.get_origin_modules():
+                        origin_module.to(model_target_device(sd_model), dtype=inference_dtype)
+                    # setattr(parent_module, name.split(".")[-1], new_block)
+                    parent_module.register_module(name.split(".")[-1], new_block)
+                    print(f"inserted cross attn block to {name}")
+            if config.load_openclip_pretrain_ckpt is not None:
+                openclip_state_dict = torch.load(config.load_openclip_pretrain_ckpt, map_location='cpu')
+                openclip_filter_state_dict = {}
+                for name in openclip_state_dict['state_dict']:
+                    if 'module.text_tower.encoder.' in name:
+                        openclip_filter_state_dict[name[len('module.text_tower.encoder.'):]] = openclip_state_dict['state_dict'][name]
+
+                old_weights = text_encoder_two.text_model.embeddings.position_embedding.weight.data
+                old_weights = old_weights.view(1, 1, *old_weights.shape)
+                new_weights = F.interpolate(old_weights, size=(512, old_weights.shape[-1]), mode='bilinear', align_corners=False)
+                new_weights = new_weights.squeeze()
+                new_embedding = nn.Embedding(512, new_weights.shape[-1])
+                new_embedding.weight.data.copy_(new_weights)
+                text_encoder_two.text_model.embeddings.position_embedding = new_embedding
+
+                text_encoder_two.text_model.embeddings.register_buffer(
+                    "position_ids", torch.arange(512).expand((1, -1)), persistent=False
+                )
+                text_encoder_two.load_state_dict(openclip_filter_state_dict, strict=True)
+
+            byt5_mapper = byt5_mapper_dict[config.byt5_mapper_type](
+                byt5_model.config,
+                **config.byt5_mapper_config,
+            )
+            unet_lora_target_modules = [
+                "attn1.to_k", "attn1.to_q", "attn1.to_v", "attn1.to_out.0",
+                "attn2.to_k", "attn2.to_q", "attn2.to_v", "attn2.to_out.0",
+            ]
+            if config.glyph_attn_arch_type == 'double_lora':
+                unet_lora_target_modules += ["glyph_attn.to_k", "glyph_attn.to_q", "glyph_attn.to_v", "glyph_attn.to_out.0"]
+            unet_lora_config = LoraConfig(
+                r=config.unet_lora_rank,
+                lora_alpha=config.unet_lora_rank,
+                init_lora_weights="gaussian",
+                target_modules=unet_lora_target_modules,
+            )
+            sd_model.model.diffusion_model.add_adapter(unet_lora_config)
+            
+            unet_lora_layers_para = torch.load(os.path.join(ckpt_dir, UNET_CKPT_NAME), map_location='cpu')
+            unet_lora_layers_para = replace_lora_keys(unet_lora_layers_para)
+
+
+            incompatible_keys = set_peft_model_state_dict(sd_model.model.diffusion_model, unet_lora_layers_para, adapter_name="default")
+            if getattr(incompatible_keys, 'unexpected_keys', []) == []:
+                print(f"loaded unet_lora_layers_para")
+            else:
+                print(f"unet_lora_layers has unexpected_keys: {getattr(incompatible_keys, 'unexpected_keys', None)}")
+            
+            inserted_attn_module_paras = torch.load(os.path.join(ckpt_dir, INSERTED_ATTN_CKPT_NAME), map_location='cpu')
+
+            missing_keys, unexpected_keys = sd_model.model.diffusion_model.load_state_dict(inserted_attn_module_paras, strict=False)
+            assert len(unexpected_keys) == 0, unexpected_keys
+            
+            byt5_mapper_para = torch.load(os.path.join(ckpt_dir, BYT5_MAPPER_CKPT_NAME), map_location='cpu')
+            byt5_mapper.load_state_dict(byt5_mapper_para)
+            
+            if config.train_byt5:
+                byt5_model_para = torch.load(os.path.join(ckpt_dir, BYT5_CKPT_NAME), map_location='cpu')
+                byt5_model.load_state_dict(byt5_model_para)
+
+            sd_model.model.byt5_mapper = byt5_mapper
+            sd_model.model.byt5_tokenizer = byt5_tokenizer
+            sd_model.model.byt5_text_encoder = byt5_model
+            sd_model.model.byt5_max_length=config.byt5_max_length
+
+        except Exception as e:
+            errors.display(e, "loading byt5 model")
+            print("", file=sys.stderr)
+            print("byt5 model failed to load, exiting", file=sys.stderr)
+            exit(1)
         
     timer.record("load weights from state dict")
 
