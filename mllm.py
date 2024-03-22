@@ -9,7 +9,7 @@ import torch
 from transformers import LlamaForCausalLM, LlamaTokenizer
 # from openai import AzureOpenAI
 import openai
-
+#openai 0.27.0
 def extract_output(text):
     # Find the output in the text
     output_pattern = r'### Output:(.*?)(?=###|$)'

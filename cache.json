@@ -5866,6 +5866,38 @@
         "checkpoint/dreamshaperXL_turboDpmppSDE.safetensors": {
             "mtime": 1708569756.0,
             "value": {}
+        },
+        "checkpoint/sd_xl_base_1.0.safetensors": {
+            "mtime": 1710245376.0,
+            "value": {
+                "modelspec.sai_model_spec": "1.0.0",
+                "modelspec.architecture": "stable-diffusion-xl-v1-base",
+                "modelspec.implementation": "https://github.com/Stability-AI/generative-models",
+                "modelspec.title": "Stable Diffusion XL 1.0 Base",
+                "modelspec.author": "StabilityAI",
+                "modelspec.description": "SDXL 1.0 Base Model, compositional expert. SDXL, the most advanced development in the Stable Diffusion text-to-image suite of models. SDXL produces massively improved image and composition detail over its predecessors. The ability to generate hyper-realistic creations for films, television, music, and instructional videos, as well as offering advancements for design and industrial use, places SDXL at the forefront of real world applications for AI imagery.",
+                "modelspec.date": "2023-07-26",
+                "modelspec.resolution": "1024x1024",
+                "modelspec.prediction_type": "epsilon",
+                "modelspec.license": "CreativeML Open RAIL++-M License",
+                "modelspec.hash_sha256": "0xd7a9105a900fd52748f20725fe52fe52b507fd36bee4fc107b1550a26e6ee1d7"
+            }
+        },
+        "checkpoint/madebyollin.safetensors": {
+            "mtime": 1710320783.0,
+            "value": {}
+        },
+        "checkpoint/playground-v2.5-1024px-aesthetic.fp16.safetensors": {
+            "mtime": 1710680312.0,
+            "value": {}
+        },
+        "checkpoint/playground-v2.5-1024px-aesthetic.safetensors": {
+            "mtime": 1710685580.0,
+            "value": {}
+        },
+        "checkpoint/playground-v2.fp16.safetensors": {
+            "mtime": 1710727937.0,
+            "value": {}
         }
     },
     "hashes": {
@@ -5876,6 +5908,30 @@
         "checkpoint/dreamshaperXL_turboDpmppSDE.safetensors": {
             "mtime": 1708569756.0,
             "sha256": "676f0d60c8e860146d5e8a0d802599cadd04e7cadf85c283f189f41f01c9e359"
+        },
+        "checkpoint/sd_xl_base_1.0.safetensors": {
+            "mtime": 1710245376.0,
+            "sha256": "31e35c80fc4829d14f90153f4c74cd59c90b779f6afe05a74cd6120b893f7e5b"
+        },
+        "vae": {
+            "mtime": 1710320783.0,
+            "sha256": "235745af8d86bf4a4c1b5b4f529868b37019a10f7c0b2e79ad0abca3a22bc6e1"
+        },
+        "checkpoint/playground-v2.5-1024px-aesthetic.fp16.safetensors": {
+            "mtime": 1710680312.0,
+            "sha256": "bcaa7dd6780974f000b17b5a6c63e6f867a75c51ffa85c67d6b196882c69b992"
+        },
+        "checkpoint/playground-v2.5-1024px-aesthetic.safetensors": {
+            "mtime": 1710685580.0,
+            "sha256": "956dca99114aaa5c3eb526381309d37ee96737e78ed64c8ae613409f47c3f65a"
+        },
+        "checkpoint/playground-v2.fp16.safetensors": {
+            "mtime": 1710727937.0,
+            "sha256": "0411e988479884b1a3ecd184123efe38d051d8d0ef24270585a7d1d57499464a"
+        },
+        "checkpoint/absolutereality_v181.safetensors": {
+            "mtime": 1708568290.0,
+            "sha256": "463d6a9fe8a4b56a4d69ef3692074c0617428dfd8e8f12f9efe3b1e9a71717ce"
         }
     }
 }

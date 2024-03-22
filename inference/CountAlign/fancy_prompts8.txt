@@ -1,0 +1,2 @@
+a photo of eight <s_e>number 8<s_e>|number 8|8
+a photo of five <s_e>number 5<s_e>|number 5|5

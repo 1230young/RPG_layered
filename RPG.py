@@ -17,10 +17,10 @@ from template.demo import demo_list
 import time
 from mmcv import Config
 import json
-from inference_data import load_inference_data, draw_bbox
+from inference_data import load_inference_data, draw_bbox, load_inference_data_with_glyph
 
 
-def resize_bbox(bbox, height, width, source_height=1457, source_width=1457, scale=16):
+def resize_bbox(bbox, height, width, source_height=1457, source_width=1457, scale=1):
     """
     Resize bounding box from source image to target image
     Args:
@@ -59,7 +59,7 @@ def read_config(file):
             continue
         break
     return config
-def initialize(model_name=None, config_dir=None, ckpt_dir=None):
+def initialize(model_name=None, config_dir=None, ckpt_dir=None, vae_dir=None):
     from modules import shared
     from modules.shared import cmd_opts
     
@@ -110,7 +110,7 @@ def initialize(model_name=None, config_dir=None, ckpt_dir=None):
     print('txt2img_scripts',modules.scripts.scripts_txt2img.scripts)
  
     try:
-        modules.sd_models.load_model(model_name=model_name, config_dir=config_dir, ckpt_dir=ckpt_dir)
+        modules.sd_models.load_model(model_name=model_name, config_dir=config_dir, ckpt_dir=ckpt_dir, vae_dir=vae_dir)
         #load lora
         temp=0
     except Exception as e:
@@ -226,7 +226,8 @@ def demo_version(demo_list):
                 batch_size=1
                 seed=demo['seed']
                 cfg=demo['CFG']
-                steps=demo['steps']
+                # steps=demo['steps']
+                steps=50
                 height=demo['height']
                 width=demo['width']
                 image, _, _, _ =RPG(user_prompt=user_prompt,
@@ -254,6 +255,7 @@ def demo_version(demo_list):
                         image[j].save(f"generated_imgs/demo_imgs/{file_name}.png")
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+    parser.add_argument("--all_config_file", type=str, default='test/glyph_mixed_model_sdxl-lora-128_noise-offset_train-byt5-mapper_frominit_mix_sdxl_canva_w1-1_8ep_4x16_premiumx2_no_glyph.py')
     parser.add_argument('--user_prompt', type=str,help='input user prompt', default="")
     parser.add_argument('--model_name', type=str,default='albedobaseXL_v20.safetensors',help='the name of the ckpt, in the folder of models/Stable-diffusion')
     parser.add_argument('--version_number',type=int,default=0, help='the version of the prompt, multi-attribute or complex-object')
@@ -277,8 +279,16 @@ if __name__ == "__main__":
     # parser.add_argument('--lora_path',default=None,type=str,help='lora path')
     parser.add_argument("--config_dir", default=None,type=str)
     parser.add_argument("--ckpt_dir", default=None, type=str)
+    parser.add_argument("--vae_dir", default=None, type=str)
+    parser.add_argument("--output_dir", default=None, type=str)
+    parser.add_argument("--load_typo_sdxl_pretrain_ckpt", default=None, type=str)
+    
+    
     opt = parser.parse_args()
-    config=read_config('test/debug.py')
+    opt.RPG_config_file="test/glyph_mixed_model_sdxl-lora-128_noise-offset_train-byt5-mapper_frominit_mix_sdxl_canva_w1-1_8ep_4x16_premiumx2.py"
+    opt.all_config_file=opt.user_prompt
+
+    config=read_config(opt.all_config_file)
     '''--use_base the function of this boolean variable is to activate the base prompt in diffusion process. Utilizing the base prompt signifies that we avoid the direct amalgamation of subregions as the latent representation. Instead, we use a foundational prompt that summarizes the image's key components and obatin the overall structure latent of the image. We then compute the weighted aggregate of these latents to yield the conclusive output. This method is instrumental in addressing the problems like omission of entities in complicated prompt generation tasks, and it also contributes to refining the edges of each subregion, ensuring they are seamlessly integrated and resonate harmony.
 
     --base_ratio the weight of the base prompt latent, if too small, it is difficult to work, if too big, it will confuse the composition and properties of subregions. We conduct ablation experiment in our paper, see our paper for more detailed information and analysis.'''
@@ -306,16 +316,19 @@ if __name__ == "__main__":
     if opt.layer_data is not None:
         use_layer=True
         layer_data=opt.layer_data
-        processed_data=load_inference_data(layer_data)
+        if opt.config_dir is not None and opt.ckpt_dir is not None:
+            processed_data=load_inference_data_with_glyph(layer_data, all=True)
+        else:
+            processed_data=load_inference_data(layer_data)
         user_prompt=[i['Layer Prompt'] for i in processed_data]
         bboxes=[i['bboxes'] for i in processed_data]
         base_prompts=[i['Base Prompt'] for i in processed_data]
+        index_list=[i['index'] for i in processed_data]
 
     else:
         use_layer=False
         layer_data=None
         bboxes=None
-
 
     if demo:
         initialize(model_name='albedobaseXL_v20.safetensors')
@@ -325,7 +338,8 @@ if __name__ == "__main__":
             appendix='gpt4'
         elif use_local:
             appendix='local'
-        initialize(model_name=model_name, config_dir=opt.config_dir, ckpt_dir=opt.ckpt_dir)
+        ckpt_dir=[opt.load_typo_sdxl_pretrain_ckpt,opt.ckpt_dir] if opt.load_typo_sdxl_pretrain_ckpt is not None else opt.ckpt_dir
+        initialize(model_name=model_name, config_dir=opt.config_dir, ckpt_dir=ckpt_dir, vae_dir=opt.vae_dir)
         if isinstance(user_prompt, str):
             user_prompts = [user_prompt]
         elif isinstance(user_prompt, list):
@@ -337,14 +351,17 @@ if __name__ == "__main__":
                 log_json = json.load(f)
         for sampler_index in [0]:
         # for cfg in [18]:
-            directory = f"multi_layers_glyph_try"
+            directory = opt.output_dir
             
             for n,user_prompt in enumerate(user_prompts):
+                
                 bbox=bboxes[n] if use_layer else None
                 if use_base:
                     base_prompt=base_prompts[n] if use_layer else base_prompt
                 else:
                     base_prompt=None
+                import random
+                seed=random.randint(0,100000)
                 image,regional_prompt, split_ratio, textprompt=RPG(user_prompt=user_prompt,
                 diffusion_model=model_name,
                 version=version,
@@ -373,7 +390,7 @@ if __name__ == "__main__":
                 for tar_dir in target_dirs:
                     for i in range(len(image)):
                         if use_layer:
-                            file_name = f"{n}.png"
+                            file_name = f"{index_list[n]}.png"
                             path=f"{directory}/{file_name}"
                             os.makedirs(f"{tar_dir}/{directory}", exist_ok=True)
                             image[i].save(f"{tar_dir}/{path}")
@@ -388,9 +405,12 @@ if __name__ == "__main__":
                     if not use_layer:
                         with open(opt.log_json_path, 'w') as f:
                             json.dump(log_json, f, indent=4)
-                break
 
-            data_draw_bbox=load_inference_data()
+
+            if opt.config_dir is not None and opt.ckpt_dir is not None:
+                data_draw_bbox=load_inference_data_with_glyph(all=True)
+            else:
+                data_draw_bbox=load_inference_data()
             for item_draw_bbox in data_draw_bbox:
                 index=item_draw_bbox['index']
                 draw_bboxes=item_draw_bbox['bboxes']

@@ -1,0 +1,2 @@
+A photo of ten <s_e>moons<s_e> in the sky.|moon|10
+A realisitc photo of an ancient Chinese man looking at ten <s_e>suns<s_e> in the sky.|sun|10

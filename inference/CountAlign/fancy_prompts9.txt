@@ -1,0 +1,8 @@
+A photo of five <s_e>cute cartoon pigs<s_e>.|an image of a pig|5
+An image of six <s_e>Naruto<s_e> standing in the forest.|Naruto|6
+A photo of seven <s_e>Superman<s_e> flying in the blue sky.|Superman|7
+A photo of eleven <s_e>rabbits<s_e> in a magical world.|an image of a rabbit|11
+A Van Gogh-style painting of twelve <s_e>cats<s_e>.|an image of a cat|12
+A photo of thriteen <s_e>guitars<s_e> on the beach.|an image of a guitar|13
+Fourteen <s_e>eggs<s_e> float in front of the nebula.|an image of an egg|14
+A photo of fifteen <s_e>dogs<s_e> walking on the street.|an image of a dog|15

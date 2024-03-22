@@ -679,11 +679,16 @@ def allchanger(p, a, b):
         p.all_negative_prompts[i] = p.all_negative_prompts[i].replace(a, b)
 
 def tokendealer(self, p):
+    pglyph=[]
     seps = "AND" if "La" in self.calc else KEYBRK
     self.seps = seps
     text, _ = extra_networks.parse_prompt(p.all_prompts[0]) # SBM From update_token_counter.
     text = prompt_parser.get_learned_conditioning_prompt_schedules([text],p.steps)[0][0][1]
     ppl = text.split(seps)
+    for n,i in enumerate(ppl):
+        if "GLYPH" in i:
+            pglyph.append(n)
+            ppl[n] = ppl[n].replace("GLYPH","")
     ntext, _ = extra_networks.parse_prompt(p.all_negative_prompts[0]) 
     npl = ntext.split(seps)
     eqb = len(ppl) == len(npl)
@@ -729,6 +734,8 @@ def tokendealer(self, p):
     self.pe = tt
     self.ppt = ppt
     self.pnt = pnt
+    self.pglyph=pglyph
+    self.ppl=ppl
 
     notarget = "Pro" in self.mode and tt == []
     if notarget:

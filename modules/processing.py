@@ -477,7 +477,8 @@ class StableDiffusionProcessing:
 
     def save_samples(self) -> bool:
         """Returns whether generated images need to be written to disk"""
-        return opts.samples_save and not self.do_not_save_samples and (opts.save_incomplete_images or not state.interrupted and not state.skipped)
+        # return opts.samples_save and not self.do_not_save_samples and (opts.save_incomplete_images or not state.interrupted and not state.skipped)
+        return False
 
 
 class Processed:
@@ -855,6 +856,7 @@ def process_images_inner(p: StableDiffusionProcessing) -> Processed:
                     file.write(processed.infotext(p, 0))
 
             p.setup_conds()
+            p.encode_glyph_prompt()
 
             for comment in model_hijack.comments:
                 p.comment(comment)
@@ -1135,6 +1137,53 @@ class StableDiffusionProcessingTxt2Img(StableDiffusionProcessing):
             if self.hr_upscaler is not None:
                 self.extra_generation_params["Hires upscaler"] = self.hr_upscaler
 
+    def encode_glyph_prompt(self):
+        if len(self.scripts.scripts[0].pglyph)==0:
+            self.byt5_prompt_embeds=[]
+            self.negative_byt5_prompt_embeds=None
+            self.scripts.scripts[0].byt5_prompt_embeds=[]
+            self.scripts.scripts[0].negative_byt5_prompt_embeds=None
+            return
+        device = shared.device
+        byt5_prompt_embeds=[]
+        byt5_attention_masks=[]
+        for index in self.scripts.scripts[0].pglyph:
+            text_prompt=self.scripts.scripts[0].ppl[index]
+            if text_prompt[0]=='\n':
+                text_prompt=text_prompt[1:]
+
+            byt5_text_inputs = self.sd_model.model.byt5_tokenizer(
+                text_prompt,
+                padding="max_length",
+                max_length=self.sd_model.model.byt5_max_length,
+                truncation=True,
+                add_special_tokens=True,
+                return_tensors="pt",
+            )
+            byt5_text_input_ids = byt5_text_inputs.input_ids
+            byt5_attention_mask = byt5_text_inputs.attention_mask.to(self.sd_model.model.byt5_text_encoder.device).bool()
+            with torch.cuda.amp.autocast(enabled=False):
+                byt5_prompt_embed = self.sd_model.model.byt5_text_encoder(
+                    byt5_text_input_ids.to(self.sd_model.model.byt5_text_encoder.device),
+                    attention_mask=byt5_attention_mask.float(),
+                )
+                byt5_prompt_embed = byt5_prompt_embed[0]
+                byt5_prompt_embed = self.sd_model.model.byt5_mapper(byt5_prompt_embed, byt5_attention_mask)
+            byt5_prompt_embeds.append(byt5_prompt_embed)
+            byt5_attention_masks.append(byt5_attention_mask)
+        negative_byt5_prompt_embeds = torch.zeros_like(byt5_prompt_embed)
+        self.byt5_prompt_embeds=byt5_prompt_embeds
+        self.negative_byt5_prompt_embeds=negative_byt5_prompt_embeds
+        self.scripts.scripts[0].byt5_prompt_embeds=byt5_prompt_embeds
+        self.scripts.scripts[0].byt5_attention_masks=byt5_attention_masks
+        self.scripts.scripts[0].negative_byt5_prompt_embeds=negative_byt5_prompt_embeds
+        
+
+
+
+
+
+
     def sample(self, conditioning, unconditional_conditioning, seeds, subseeds, subseed_strength, prompts):
         self.sampler = sd_samplers.create_sampler(self.sampler_name, self.sd_model)
 
@@ -1309,6 +1358,7 @@ class StableDiffusionProcessingTxt2Img(StableDiffusionProcessing):
 
         self.hr_uc = None
         self.hr_c = None
+        
 
         if self.enable_hr and self.hr_checkpoint_info is None:
             if shared.opts.hires_fix_use_firstpass_conds:

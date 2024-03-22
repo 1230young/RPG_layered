@@ -1,0 +1,2 @@
+A realistic image of three <s_e>cats<s_e>.|an image of a cat|3
+A realistic image of three <s_e>dogs<s_e>.|an image of a dog|3

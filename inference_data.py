@@ -2,7 +2,7 @@ import json
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 import matplotlib as plt
-
+COLOR_LIST=['red','green','blue','purple','orange','pink','brown','black','gray','cyan','magenta','olive','lime','teal','navy','maroon','aqua','fuchsia','silver','gold','indigo','violet','tan','khaki','coral','salmon','tomato','orangered','darkorange','darkred','darkgoldenrod','darkkhaki','darkolivegreen','darkseagreen','darkgreen','darkcyan','darkturquoise','darkslategray','darkblue','darkviolet','darkmagenta','darkorchid','darkpink','darksalmon','darkseagreen','darkslateblue','darkslategray','darkturquoise','darkviolet','deeppink','deepskyblue','dimgray','dodgerblue','firebrick','floralwhite','forestgreen','fuchsia','gainsboro','ghostwhite','gold','goldenrod','gray','green','greenyellow','honeydew','hotpink','indianred','indigo','ivory','khaki','lavender','lavenderblush','lawngreen','lemonchiffon','lightblue','lightcoral','lightcyan','lightgoldenrodyellow','lightgray','lightgreen','lightpink','lightsalmon','lightseagreen','lightskyblue','lightslategray','lightsteelblue','lightyellow','lime','limegreen','linen','magenta','maroon','mediumaquamarine','mediumblue','mediumorchid','mediumpurple','mediumseagreen','mediumslateblue','mediumspringgreen','mediumturquoise','mediumvioletred','midnightblue','mintcream','mistyrose','moccasin','navajowhite','navy','oldlace','olive','olivedrab','orange','orangered','orchid','palegoldenrod','palegreen','paleturquoise','palevioletred','papayawhip','peachpuff','peru','pink','plum','powderblue','purple','red','rosybrown','royalblue','saddlebrown','salmon','sandybrown','seagreen','seashell','sienna','silver','skyblue','slateblue','slategray','snow','springgreen','steelblue','tan','teal','thistle','tomato','turquoise','violet','wheat','white','whitesmoke','yellow','yellowgreen']
 
 def load_inference_data(json_file='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b-newer.json'):
     with open(json_file, 'r') as f:
@@ -17,6 +17,44 @@ def load_inference_data(json_file='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster
                 layer_prompt+=layer['caption']+' BREAK\n'
             else:
                 layer_prompt+=layer['caption']+' BREAK\n'#debug
+        layer_prompt=item['base_image']['caption']+' BREAK\n'+layer_prompt
+        bboxes=[[layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]] for layer in item['layers']]
+        bboxes.insert(0,[0,0,1457,1457])
+        index=item['index']
+        base_prompt=item['whole_image']['caption']
+        processed_data.append({'layer_num':layer_num,'Layer Prompt':layer_prompt,'bboxes':bboxes,'index':index,'Base Prompt':base_prompt})
+        
+
+    return processed_data
+
+def load_inference_data_with_glyph(json_file='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b-newer.json', glyph_file="/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_text_layer_prompts.json", all=True):
+    with open(json_file, 'r') as f:
+        data = json.load(f)
+    with open(glyph_file, 'r') as f:
+        glyph_data = json.load(f)
+    processed_data = []
+    for item in data:
+        glyph_item=None
+        for n,g in enumerate(glyph_data):
+            if g['index']==item['index']:
+                glyph_item=g
+                if not all and n >=30:
+                    glyph_item=None
+        if glyph_item is None:
+            continue
+       
+        layer_num=len(item['layers'])+1
+        layer_prompt=''
+        item['layers'].reverse()
+        for n,layer in enumerate(item['layers']):
+            if layer["layer_num"] in [x["layer_num"] for x in glyph_item['layers']]:
+                caption=[x["caption"] for x in glyph_item['layers'] if x["layer_num"]==layer["layer_num"]][0]
+                layer_prompt+=caption+' GLYPH BREAK\n'
+            else:
+                if n!=layer_num-1:
+                    layer_prompt+=layer['caption']+' BREAK\n'
+                else:
+                    layer_prompt+=layer['caption']+' BREAK\n'#debug
         layer_prompt=item['base_image']['caption']+' BREAK\n'+layer_prompt
         bboxes=[[layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]] for layer in item['layers']]
         bboxes.insert(0,[0,0,1457,1457])
@@ -86,6 +124,8 @@ def draw_bbox(index,bboxes,soruce_dir='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMa
     img.save(f'{target_dir}/{index}.png')
 
 
+
+
 def load_layout(dir="/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/CoT-GPT-4-0229-nowidth/CoT-GPT-4-0229-nowidth",meta='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b-newer.json'):
     processed_data=[]
     with open(meta, 'r') as f:
@@ -142,7 +182,53 @@ def load_layout2(dir="/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/GP
             processed_data.append(sub_data)
     return processed_data
 
+def load_intention_output_data(json_file='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/filter_save_color_800_tol_5_gpt_output_bg.json'):
+    with open(json_file, 'r') as f:
+        data = json.load(f)
+    processed_data = []
+    for item in data:
+        if len(item['gpt_output'])==0:
+            continue
+        layer_num=len(item['gpt_output'])
+        layer_prompt=''
+        bboxes=[]
+        for n,layer in enumerate(item['gpt_output']):
+            if "background" in layer.keys():
+                layer_prompt+=layer['background']+' BREAK\n'
+                bboxes.append([0,0,1457,1457])
+                continue
+            if layer['category']=='text':
+                layer_prompt+=layer['caption']+' GLYPH BREAK\n'
+            else:
+                layer_prompt+=layer['caption']+' BREAK\n'
+            bboxes.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
+        
+        index=item['index']
+        base_prompt=item['intension']
+        processed_data.append({'layer_num':layer_num,'Layer Prompt':layer_prompt,'bboxes':bboxes,'index':index,'Base Prompt':base_prompt, "intention": item['intension']})
+        
 
+    return processed_data
+
+def load_gpt_output(gpt_output, intention, base_prompt=""):
+    print(gpt_output)
+    item=gpt_output
+    index=0
+    layer_num=len(item)
+    layer_prompt=''
+    bboxes=[]
+    for n,layer in enumerate(item):
+        if n==0:
+            layer_prompt+=layer['background']+' BREAK\n'
+            bboxes.append([0,0,1457,1457])
+            continue
+        if layer['category']=='text':
+            layer_prompt+=layer['caption']+' GLYPH BREAK\n'
+        else:
+            layer_prompt+=layer['caption']+' BREAK\n'
+        bboxes.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
+    base_prompt=base_prompt if len(base_prompt)>0 else intention
+    return {'layer_num':layer_num,'Layer Prompt':layer_prompt,'bboxes':bboxes,'index':index,'Base Prompt':base_prompt}
 
     
 
@@ -153,12 +239,32 @@ if __name__ == "__main__":
     #         index=item['index']
     #         bboxes=item['bboxes']
     #         draw_bbox(index,bboxes)
-    data=load_inference_data()
-    for item in data:
-        index=item['index']
-        bboxes=item['bboxes']
-        source_dir='/pyy/openseg_blob/yuyang/code/RPG/multi_layers_base_0.1_sampler_2'
-        target_dir='/pyy/openseg_blob/yuyang/code/RPG/multi_layers_base_0.1_sampler_2_bbox'
-        draw_bbox(index,bboxes,source_dir,target_dir)
+    # data=load_intention_output_data()
+    # for item in data:
+    #     index=item['index']
+    #     bboxes=item['bboxes']
+    #     source_dir='/pyy/openseg_blob/yuyang/code/RPG/try_pipeline'
+    #     target_dir='/pyy/openseg_blob/yuyang/code/RPG/try_pipeline_bbox'
+    #     draw_bbox(index,bboxes,source_dir,target_dir)
 
+    sample=[[ { "background": "The layer is completely light blue color, representing a clear sky." }, { "layer": 0, "category": "element", "caption": "The layer features a cartoon-style illustration of a chicken with a round body, large eyes, and a bright red comb and wattle. The chicken is standing on one leg, with the other leg lifted in a playful pose, and it's colored in a combination of white and light yellow shades.", "top_left": [ 150, 450 ], "bottom_right": [ 450, 1000 ] }, { "layer": 1, "category": "element", "caption": "Another cartoon-style chicken with a round body, large eyes, and a bright red comb and wattle. This chicken is standing on both legs, facing the left side of the poster, and is colored in various shades of brown.", "top_left": [ 600, 530 ], "bottom_right": [ 900, 1080 ] }, { "layer": 2, "category": "element", "caption": "The third cartoon chicken, featuring a round body, large eyes, and a bright red comb and wattle. The chicken is standing on both legs, facing the right side of the poster, and is colored in a combination of light orange and white shades.", "top_left": [ 1050, 460 ], "bottom_right": [ 1350, 1010 ] }, { "layer": 3, "category": "element", "caption": "The first cartoon-style duck, characterized by an elongated body, large eyes, and a bright orange beak. The duck is standing on both legs, facing the left side of the poster, and is colored in various shades of green.", "top_left": [ 300, 1100 ], "bottom_right": [ 600, 1450 ] }, { "layer": 4, "category": "element", "caption": "A second cartoon-style duck with an elongated body, large eyes, and a bright orange beak. The duck is standing on both legs, facing the right side of the poster, and is colored in a combination of light blue and white shades.", "top_left": [ 900, 1120 ], "bottom_right": [ 1200, 1470 ] } ],
+    [ { "background": "The layer is completely light beige color." }, { "layer": 0, "category": "element", "caption": "The layer features a wooden table with a realistic wood grain texture in warm brown hues, covering the bottom half of the canvas to create the impression of a cozy, intimate setting.", "top_left": [ 0, 728 ], "bottom_right": [ 1456, 1457 ] }, { "layer": 1, "category": "element", "caption": "An open book with visible pages and text, resting on the wooden table. The book's cover and binding are a soft, earthy brown color, blending harmoniously with the warm tones of the wooden surface.", "top_left": [ 488, 805 ], "bottom_right": [ 968, 1207 ] }, { "layer": 2, "category": "element", "caption": "An orange-hued cat sitting attentively in front of the open book, its body facing the viewer but its head turned to the side, as if gazing curiously at the pages. The cat's fur is rendered in rich, warm tones, with darkened shadows and highlights to suggest depth and texture. The cat's eyes are bright and inquisitive, further emphasizing the intellectual and cozy ambiance of the scene.", "top_left": [ 679, 557 ], "bottom_right": [ 1249, 1046 ] }, { "layer": 3, "category": "element", "caption": "A soft, warm light source is illustrated, casting a gentle glow onto the scene. The light is diffuse, creating a cozy and inviting atmosphere that accentuates the rich colors and textures of the cat and the wooden table.", "top_left": [ 0, 0 ], "bottom_right": [ 1456, 1457 ] } ],
+    [ { "background": "The layer is completely light blue color." }, { "layer": 0, "category": "element", "caption": "Five whole apples arranged in a neat row, with the first three being red and the last two being green. All apples have a simple leaf on top, and the colors are bright and eye-catching to appeal to young children.", "top_left": [ 578, 250 ], "bottom_right": [ 878, 450 ] }, { "layer": 1, "category": "element", "caption": "A large hand-drawn arrow, colored in yellow, pointing from the two green apples to the right, indicating that they are being taken away from the group of five apples.", "top_left": [ 889, 295 ], "bottom_right": [ 1005, 405 ] }, { "layer": 2, "category": "element", "caption": "Two green apples, separate from the original group and placed to the right of the arrow, illustrating that they have been removed from the group.", "top_left": [ 1020, 250 ], "bottom_right": [ 1245, 450 ] }, { "layer": 3, "category": "text", "caption": "Text \"Subtraction\n\" in <color-31>, <font-97>. ", "top_left": [ 50, 100 ], "bottom_right": [ 550, 200 ] }, { "layer": 4, "category": "text", "caption": "Text \"5 - 2 = 3\n\" in <color-31>, <font-97>. ", "top_left": [ 400, 500 ], "bottom_right": [ 1100, 600 ] }, { "layer": 5, "category": "text", "caption": "Text \"Take away two apples\nfrom five apples\n\" in <color-31>, <font-59>. ", "top_left": [ 50, 700 ], "bottom_right": [ 550, 800 ] }, { "layer": 6, "category": "text", "caption": "Text \"You have three apples left!\n\" in <color-31>, <font-59>. ", "top_left": [ 50, 850 ], "bottom_right": [ 550, 950 ] }, { "layer": 7, "category": "element", "caption": "A yellow sun with a smiling face, placed at the top right corner of the poster, adding a friendly and cheerful atmosphere to the design.", "top_left": [ 1256, 56 ], "bottom_right": [ 1456, 256 ] } ],
+    [ { "background": "The layer is a stylized stadium full of cheering fans, using a blend of blue and green colors to represent the atmosphere. The stadium is designed with lines and shapes to suggest depth and perspective, creating a dynamic and engaging scene." }, { "layer": 0, "category": "element", "caption": "A cartoon rabbit dressed in running gear, wearing a red tank top, blue shorts, and a white headband. The rabbit is in a running position, smiling and passing the baton to the next animal.", "top_left": [ 95, 450 ], "bottom_right": [ 395, 1050 ] }, { "layer": 1, "category": "element", "caption": "A cartoon bear dressed in soccer attire, wearing a green jersey, white shorts, and soccer cleats. The bear is standing on one foot while receiving the baton from the rabbit with an enthusiastic expression.", "top_left": [ 390, 455 ], "bottom_right": [ 690, 1100 ] }, { "layer": 2, "category": "element", "caption": "A cartoon fox dressed in biking gear, wearing a yellow cycling jersey, black shorts, a helmet, and cycling gloves. The fox is holding the handlebars of a bike with one hand and receiving the baton from the bear with the other hand, showing a determined and focused expression.", "top_left": [ 675, 400 ], "bottom_right": [ 1175, 1075 ] }, { "layer": 3, "category": "text", "caption": "Text \"Go Farther Together!\n\" in <color-2>, <font-137>. ", "top_left": [ 355, 125 ], "bottom_right": [ 1100, 250 ] }, { "layer": 4, "category": "element", "caption": "A cartoon baton in red and white colors, representing collaboration and support, being passed between the animals in the relay race.", "top_left": [ 355, 725 ], "bottom_right": [ 685, 775 ] } ]]
+    index=[4,5,6,7]
+    from RPG_pipeline import resize_bbox
+    bboxes=[]
+    for i in sample:
+        bbox=[]
+        for j in i:
+            if 'background' in j.keys():
+                bbox.append([0,0,1457,1457])
+                continue
+            temp=[j['top_left'][1],j['top_left'][0],j['bottom_right'][1],j['bottom_right'][0]]
+            bbox.append(temp)
+        bboxes.append(bbox)
+    source_dir='/pyy/openseg_blob/yuyang/code/RPG/try_pipeline'
+    target_dir='/pyy/openseg_blob/yuyang/code/RPG/try_pipeline_bbox'
+    for i in range(len(index)):
+        draw_bbox(index[i],bboxes[i],source_dir,target_dir)
 

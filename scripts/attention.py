@@ -5,7 +5,7 @@ import torch
 import torchvision
 import torchvision.transforms.functional as F
 from torchvision.transforms import InterpolationMode, Resize  # Mask.
-
+from xformers.ops import memory_efficient_attention
 TOKENSCON = 77
 TOKENS = 75
 
@@ -14,6 +14,90 @@ def db(self,text):
         print(text)
 
 def main_forward(module,x,context,mask,divide,isvanilla = False,userpp = False,tokens=[],width = 64,height = 64,step = 0, isxl = False, negpip = None, inhr = None):
+    USE_XFORMERS=False
+    # Forward.
+
+    if negpip:
+        conds, contokens = negpip
+        context = torch.cat((context,conds),1)
+
+    h = module.heads
+    if isvanilla: # SBM Ddim / plms have the context split ahead along with x.
+        pass
+    else: # SBM I think divide may be redundant.
+        h = h // divide
+    q = module.to_q(x)
+
+    context = atm.default(context, x)
+    k = module.to_k(context)
+    v = module.to_v(context)
+
+    
+    if USE_XFORMERS:
+        q = atm.rearrange(q, 'b n (h d)-> b n h d', h=h)
+        k = atm.rearrange(k, 'b n (h d)-> b n h d', h=h)
+        v = atm.rearrange(v, 'b n (h d)-> b n h d', h=h)
+        out=memory_efficient_attention(q, k, v, mask, scale=module.scale)
+        out = atm.rearrange(out, 'b n h d -> b n (h d)')
+    else:
+        q, k, v = map(lambda t: atm.rearrange(t, 'b n (h d) -> (b h) n d', h=h), (q, k, v))
+        sim = atm.einsum('b i d, b j d -> b i j', q, k) * module.scale
+
+        if negpip:
+            conds, contokens = negpip
+            if contokens:
+                for contoken in contokens:
+                    start = (v.shape[1]//77 - len(contokens)) * 77
+                    v[:,start+1:start+contoken,:] = -v[:,start+1:start+contoken,:] 
+
+        if atm.exists(mask):
+            # mask = atm.rearrange(mask, 'b ... -> b (...)')
+            max_neg_value = -torch.finfo(sim.dtype).max
+            mask = atm.repeat(mask, 'b j k-> (b h) j k', h=h)
+            sim.masked_fill_(~mask, max_neg_value)
+
+        attn = sim.softmax(dim=-1)
+
+        ## for prompt mode make basemask from attention maps
+
+        global pmaskshw,pmasks
+
+        if inhr and not hiresfinished: hiresscaler(height,width,attn)
+
+        if userpp and step > 0:
+            for b in range(attn.shape[0] // 8):
+                if pmaskshw == []:
+                    pmaskshw = [(height,width)]
+                elif (height,width) not in pmaskshw:
+                    pmaskshw.append((height,width))
+
+                for t in tokens:
+                    power = 4 if isxl else 1.2
+                    add = attn[8*b:8*(b+1),:,t[0]:t[0]+len(t)]**power
+                    add = torch.sum(add,dim = 2)
+                    t = f"{t}-{b}"         
+                    if t not in pmasks:
+                        pmasks[t] = add
+                    else:
+                        if pmasks[t].shape[1] != add.shape[1]:
+                            add = add.view(8,height,width)
+                            add = F.resize(add,pmaskshw[0])
+                            add = add.reshape_as(pmasks[t])
+
+                        pmasks[t] = pmasks[t] + add
+
+        out = atm.einsum('b i j, b j d -> b i d', attn, v)
+        out = atm.rearrange(out, '(b h) n d -> b n (h d)', h=h)
+    try:
+        out = module.to_out(out)
+    except:
+        length=len(module.to_out)
+        for i in range(length):
+            out = module.to_out[i](out)
+
+    return out
+
+def main_debug_forward(module,x,context,mask,divide,isvanilla = False,userpp = False,tokens=[],width = 64,height = 64,step = 0, isxl = False, negpip = None, inhr = None):
     
     # Forward.
 
@@ -44,9 +128,9 @@ def main_forward(module,x,context,mask,divide,isvanilla = False,userpp = False,t
                 v[:,start+1:start+contoken,:] = -v[:,start+1:start+contoken,:] 
 
     if atm.exists(mask):
-        mask = atm.rearrange(mask, 'b ... -> b (...)')
+        # mask = atm.rearrange(mask, 'b ... -> b (...)')
         max_neg_value = -torch.finfo(sim.dtype).max
-        mask = atm.repeat(mask, 'b j -> (b h) () j', h=h)
+        mask = atm.repeat(mask, 'b j k -> (b h) j k', h=h)
         sim.masked_fill_(~mask, max_neg_value)
 
     attn = sim.softmax(dim=-1)
@@ -173,10 +257,36 @@ def hook_forward(self, module):
             i = 0
             outb = None
 
-            if self.bboxes[0][2]!=dsh or self.bboxes[0][3]!=dsw:
+            #for debug, check the demo in bboxes mode
+            # self.use_layer = True
+            # if not hasattr(self, "bboxes"):
+                
+            #     self.bboxes=[]
+            #     sumout = 0
+            #     for drow in self.aratios:
+            #         sumin = 0
+            #         for dcell in drow.cols:
+            #             addout = 0
+            #             addin = 0
+            #             sumin = sumin + int(dsin*dcell.ed) - int(dsin*dcell.st)
+            #             if dcell.ed >= 0.999:
+            #                 addin = sumin - dsin
+            #                 sumout = sumout + int(dsout*drow.ed) - int(dsout*drow.st)
+            #                 if drow.ed >= 0.999:
+            #                     addout = sumout - dsout
+            #             if "Horizontal" in self.mode:
+            #                 self.bboxes.append([int(dsh*drow.st) + addout,int(dsw*dcell.st) + addin,int(dsh*drow.ed),int(dsw*dcell.ed)])
+            #             elif "Vertical" in self.mode:
+            #                 self.bboxes.append([int(dsh*dcell.st) + addin,int(dsw*drow.st) + addout,int(dsh*dcell.ed),int(dsw*drow.ed)])
+
+            #end of debug
+
+
+
+            if height!=dsh or width!=dsw:
                 bboxes=[]
-                scale_h=float(dsh)/self.bboxes[0][2]
-                scale_w=float(dsw)/self.bboxes[0][3]
+                scale_h=float(dsh)/height
+                scale_w=float(dsw)/width
                 for bbox in self.bboxes:
                     bbox_resize=[int(bbox[0]*scale_h),int(bbox[1]*scale_w),int(bbox[2]*scale_h),int(bbox[3]*scale_w)]
                     if bbox_resize[0]>=bbox_resize[2]:
@@ -212,30 +322,7 @@ def hook_forward(self, module):
             else:
                 bboxes=self.bboxes
 
-            #for debug, check the demo in bboxes mode
-            # self.use_layer = True
-            # self.bboxes=[]
-            # sumout = 0
-            # for drow in self.aratios:
-            #     sumin = 0
-            #     for dcell in drow.cols:
-            #         addout = 0
-            #         addin = 0
-            #         sumin = sumin + int(dsin*dcell.ed) - int(dsin*dcell.st)
-            #         if dcell.ed >= 0.999:
-            #             addin = sumin - dsin
-            #             sumout = sumout + int(dsout*drow.ed) - int(dsout*drow.st)
-            #             if drow.ed >= 0.999:
-            #                 addout = sumout - dsout
-            #         if "Horizontal" in self.mode:
-            #             self.bboxes.append([int(dsh*drow.st) + addout,int(dsw*dcell.st) + addin,int(dsh*drow.ed),int(dsw*dcell.ed)])
-            #         elif "Vertical" in self.mode:
-            #             self.bboxes.append([int(dsh*dcell.st) + addin,int(dsw*drow.st) + addout,int(dsh*dcell.ed),int(dsw*drow.ed)])
-
-                    
-
-
-            #end of debug
+            
             
             #for debug, generate different layers
             debug=False
@@ -272,7 +359,6 @@ def hook_forward(self, module):
                     cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
                     if cnet_ext > 0:
                         context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
-                        
                     negpip = negpipdealer(i,pn)
 
                     i = i + 1
@@ -293,15 +379,26 @@ def hook_forward(self, module):
                 if self.use_layer:
                     ox = torch.zeros_like(x).reshape(x.size()[0], dsh, dsw, x.size()[2])
                     for j in range(len(bboxes)):
-                        context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
-                        # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
-                        cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
-                        if cnet_ext > 0:
-                            context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
+                        attention_mask=mask
+                        if i in self.pglyph:
+                            context=self.byt5_prompt_embeds[self.pglyph.index(i)]
+                            real_length=len(torch.where(self.byt5_attention_masks[self.pglyph.index(i)])[0])
+                            context=context[:,:real_length,:]
+                            # attention_mask=self.byt5_attention_masks[self.pglyph.index(i)].repeat(1,x.size()[1],1)
+                            # i+=1
+                            # continue
+                        else:
+                            context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
+                            # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
+                            cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
+                            if cnet_ext > 0:
+                                context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
+                            
                             
                         negpip = negpipdealer(i,pn)
 
                         db(self,f"tokens : {tll[i][0]*TOKENSCON}-{tll[i][1]*TOKENSCON}")
+
                         out = main_forward(module, x, context, mask, divide, self.isvanilla,userpp = self.pn, step = self.step, isxl = self.isxl,negpip = negpip)
                         if len(self.nt) == 1 and not pn:
                             db(self,"return out for NP")
@@ -664,6 +761,248 @@ def hook_self_attn_forward(self, module):
             mask=mask.to(x.device).bool()
             self.masks[str(dsh)] = mask
             return module.original_forward(x, context=context, mask=mask, additional_tokens=additional_tokens, n_times_crossframe_attn_in_self=n_times_crossframe_attn_in_self)
+    return forward
+
+def hook_debug_forward(self, module):
+    def forward(x, context=None, mask=None, additional_tokens=None, n_times_crossframe_attn_in_self=0):
+        if self.debug:
+            print("input : ", x.size())
+            print("tokens : ", context.size())
+            print("module : ", getattr(module, self.layer_name,None))
+        if "conds" in self.log:
+            if self.log["conds"] != context.size():
+                self.log["conds2"] = context.size()
+        else:
+            self.log["conds"] = context.size()
+
+        if self.xsize == 0: self.xsize = x.shape[1]
+        if "input" in getattr(module, self.layer_name,""):
+            if x.shape[1] > self.xsize:
+                self.in_hr = True
+
+        height = self.hr_h if self.in_hr and self.hr else self.h 
+        width = self.hr_w if self.in_hr and self.hr else self.w
+
+        xs = x.size()[1]
+        scale = round(math.sqrt(height * width / xs))
+
+        dsh = round(height / scale)
+        dsw = round(width / scale)
+        ha, wa = xs % dsh, xs % dsw
+        if ha == 0:
+            dsw = int(xs / dsh)
+        elif wa == 0:
+            dsh = int(xs / dsw)
+
+        contexts = context.clone()
+        
+
+        # SBM Matrix mode.
+        def matsepcalc(x,contexts,mask,pn,divide):
+            db(self,f"in MatSepCalc")
+            h_states = []
+            xs = x.size()[1]
+            (dsh,dsw) = split_dims(xs, height, width, self)
+            
+            if "Horizontal" in self.mode: # Map columns / rows first to outer / inner.
+                dsout = dsw
+                dsin = dsh
+            elif "Vertical" in self.mode:
+                dsout = dsh
+                dsin = dsw
+            # if pn:
+            #     tll = self.pt
+            # else:
+
+            #     tll = self.nt
+                # tll[0] = self.pt[0] if len(self.nt) == 1 else self.nt[0]
+            tll = self.pt if pn else self.nt
+            
+            i = 0
+            outb = None
+
+
+
+            if self.bboxes[0][2]!=dsh or self.bboxes[0][3]!=dsw:
+                bboxes=[]
+                scale_h=float(dsh)/self.bboxes[0][2]
+                scale_w=float(dsw)/self.bboxes[0][3]
+                for bbox in self.bboxes:
+                    bbox_resize=[int(bbox[0]*scale_h),int(bbox[1]*scale_w),int(bbox[2]*scale_h),int(bbox[3]*scale_w)]
+                    if bbox_resize[0]>=bbox_resize[2]:
+                        if bbox_resize[0]>0:
+                            bbox_resize[0]-=1
+                        else:   
+                            bbox_resize[2]+=1
+                    if bbox_resize[1]>=bbox_resize[3]:
+                        if bbox_resize[1]>0:
+                            bbox_resize[1]-=1
+                        else:
+                            bbox_resize[3]+=1  
+                    #for test
+                    if len(bbox)==8:
+                        target_bbox_resize=[int(bbox[4]*scale_h),int(bbox[5]*scale_w),int(bbox[6]*scale_h),int(bbox[7]*scale_w)]
+                        if target_bbox_resize[0]>=target_bbox_resize[2]:
+                            if target_bbox_resize[0]>0:
+                                target_bbox_resize[0]-=1
+                            else:   
+                                target_bbox_resize[2]+=1
+                        if target_bbox_resize[1]>=target_bbox_resize[3]:
+                            if target_bbox_resize[1]>0:
+                                target_bbox_resize[1]-=1
+                            else:
+                                target_bbox_resize[3]+=1  
+                        bbox_resize=bbox_resize+target_bbox_resize
+
+                    #test end
+                    bboxes.append(bbox_resize)
+                
+                    
+
+            else:
+                bboxes=self.bboxes
+
+
+            if self.usebase:
+                context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
+                # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
+                cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
+                if cnet_ext > 0:
+                    context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
+                    
+                negpip = negpipdealer(i,pn)
+
+                i = i + 1
+
+                out = main_debug_forward(module, x, context, mask, divide, self.isvanilla,userpp =True,step = self.step, isxl = self.isxl, negpip = negpip)
+
+                if len(self.nt) == 1 and not pn:
+                    db(self,"return out for NP")
+                    return out
+                # if self.usebase:
+                outb = out.clone()
+                outb = outb.reshape(outb.size()[0], dsh, dsw, outb.size()[2]) if "Ran" not in self.mode else outb
+            #使用mask方式添加glyph control
+            encoder_hidden_states=contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
+            cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
+            if cnet_ext > 0:
+                encoder_hidden_states = torch.cat([encoder_hidden_states,contexts[:,-cnet_ext:,:]],dim = 1)
+            glyph_encoder_hidden_states=[]
+            bbox=[]
+            for n,t in enumerate(self.byt5_prompt_embeds):
+                glyph_encoder_hidden_states.append(t)
+                bbox.append(bboxes[self.pglyph[n]-1] if self.usebase else bboxes[self.pglyph[n]])
+            bg_attn_mask=torch.ones((1,x.size()[1],encoder_hidden_states.size(1)),device=encoder_hidden_states.device).reshape(1,dsh,dsw,encoder_hidden_states.size(1))
+            for b in bbox:
+                bg_attn_mask[:,b[0]:b[2],b[1]:b[3],:]=0
+            bg_attn_mask=bg_attn_mask.reshape(1,x.size()[1],encoder_hidden_states.size(1))
+            glyph_attn_mask=[]
+            for n, glyph in enumerate(glyph_encoder_hidden_states):
+                glyph_attn_mask.append(torch.zeros((1,x.size()[1],glyph.size(1)),device=encoder_hidden_states.device).reshape(1,dsh,dsw,glyph.size(1)))
+                glyph_attn_mask[n][:,bbox[n][0]:bbox[n][2],bbox[n][1]:bbox[n][3],:]=1
+                glyph_attn_mask[n]=glyph_attn_mask[n].reshape(1,x.size()[1],glyph.size(1))
+            glyph_encoder_hidden_states=torch.cat(glyph_encoder_hidden_states,dim=1)
+            glyph_attn_mask=torch.cat(glyph_attn_mask,dim=-1)
+            content=torch.cat([encoder_hidden_states, glyph_encoder_hidden_states], dim=1)
+            mask=torch.cat([bg_attn_mask, glyph_attn_mask], dim=-1).bool()
+            out = main_debug_forward(module, x, content, mask, divide, self.isvanilla,userpp = self.pn, step = self.step, isxl = self.isxl,negpip = negpip)
+            return out
+
+
+
+
+            # sumout = 0
+            # db(self,f"tokens : {tll},pn : {pn}")
+            # db(self,[r for r in self.aratios])
+            # if self.use_layer:
+            #     ox = torch.zeros_like(x).reshape(x.size()[0], dsh, dsw, x.size()[2])
+            #     first_glyph_layer=False
+            #     for j in range(len(bboxes)):
+            #         if i in self.pglyph:
+            #             context=self.byt5_prompt_embeds[self.pglyph.index(i)]
+            #             first_glyph_layer=True
+            #             # i+=1
+            #             # continue
+            #         else:
+            #             context = contexts[:,tll[i][0] * TOKENSCON:tll[i][1] * TOKENSCON,:]
+            #             # SBM Controlnet sends extra conds at the end of context, apply it to all regions.
+            #             cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
+            #             if cnet_ext > 0:
+            #                 context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
+            #         if j!=0 and not first_glyph_layer: 
+            #             i+=1
+            #             continue
+            #         negpip = negpipdealer(i,pn)
+
+            #         db(self,f"tokens : {tll[i][0]*TOKENSCON}-{tll[i][1]*TOKENSCON}")
+            #         out = main_debug_forward(module, x, context, mask, divide, self.isvanilla,userpp = self.pn, step = self.step, isxl = self.isxl,negpip = negpip)
+            #         if len(self.nt) == 1 and not pn:
+            #             db(self,"return out for NP")
+            #             return out
+            #         out = out.reshape(out.size()[0], dsh, dsw, out.size()[2]) # convert to main shape.
+            #         # Resize, put all the layer latent in the bbox area
+            #         # out = out[:,bboxes[j][4]:bboxes[j][6],bboxes[j][5]:bboxes[j][7],:]
+            #         # out=out.permute(0,3,1,2)
+            #         # from torchvision.transforms import Resize 
+            #         # torch_resize=Resize((bboxes[j][2]-bboxes[j][0],bboxes[j][3]-bboxes[j][1]), interpolation = InterpolationMode("nearest"))
+            #         # out = torch_resize(out)
+            #         # out=out.permute(0,2,3,1)
+            #         # ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out
+            #         # Resize end
+            #         ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]
+
+            #         i+=1
+            #         if first_glyph_layer:
+            #             break
+
+            #     if self.usebase : 
+            #         ox = ox * (1 - self.bratios[0][0]) + outb * self.bratios[0][0]
+
+
+
+            #     else:
+            #         ox=None
+            # ox = ox.reshape(x.size()[0],x.size()[1],x.size()[2]) # Restore to 3d source.  
+            # return ox
+
+        
+        if self.eq:
+            db(self,"same token size and divisions")
+            ox = matsepcalc(x, contexts, mask, True, 1)
+        elif x.size()[0] == 1 * self.batch_size:
+            ox = matsepcalc(x, contexts, mask, self.pn, 1)
+        else:
+            db(self,"same token size and different divisions")
+            # SBM You get 2 layers of x, context for pos/neg.
+            # Each should be forwarded separately, pairing them up together.
+            if self.isvanilla: # SBM Ddim reverses cond/uncond.
+                nx, px = x.chunk(2)
+                conn,conp = contexts.chunk(2)
+            else:
+                px, nx = x.chunk(2)
+                conp,conn = contexts.chunk(2)
+
+            # SBM I think division may have been an incorrect patch.
+            # But I'm not sure, haven't tested beyond DDIM / PLMS.
+            opx = matsepcalc(px, conp, mask, True, 2)
+            onx = matsepcalc(nx, conn, mask, False, 2)
+            if self.isvanilla: # SBM Ddim reverses cond/uncond.
+                ox = torch.cat([onx, opx])
+            else:
+                ox = torch.cat([opx, onx])  
+
+        self.count += 1
+
+        limit =70 if self.isxl else 16
+
+        if self.count == limit:
+            self.pn = not self.pn
+            self.count = 0
+            self.pfirst = False
+            self.condi += 1
+        db(self,f"output : {ox.size()}")
+        return ox
+
     return forward
          
 

@@ -389,7 +389,7 @@ class SkipWritingToConfig:
         SkipWritingToConfig.skip = self.previous
 
 
-def load_model_weights(model, checkpoint_info: CheckpointInfo, state_dict, timer):
+def load_model_weights(model, checkpoint_info: CheckpointInfo, state_dict, timer, vae_dir=None):
     sd_model_hash = checkpoint_info.calculate_shorthash()
     timer.record("calculate hash")
 
@@ -465,6 +465,8 @@ def load_model_weights(model, checkpoint_info: CheckpointInfo, state_dict, timer
     sd_vae.delete_base_vae()
     sd_vae.clear_loaded_vae()
     vae_file, vae_source = sd_vae.resolve_vae(checkpoint_info.filename).tuple()
+    if vae_dir is not None:
+        vae_file=os.path.dirname(checkpoint_info.filename) + '/' + vae_dir
     sd_vae.load_vae(model, vae_file, vae_source)
     timer.record("load VAE")
 
@@ -638,7 +640,7 @@ def send_model_to_trash(m):
     devices.torch_gc()
 
 
-def load_model(checkpoint_info=None, already_loaded_state_dict=None,model_name=None,config_dir=None, ckpt_dir=None):
+def load_model(checkpoint_info=None, already_loaded_state_dict=None,model_name=None,config_dir=None, ckpt_dir=None, vae_dir=None):
     from modules import sd_hijack
     checkpoint_info = checkpoint_info or select_checkpoint(model_name=model_name)
 
@@ -695,7 +697,7 @@ def load_model(checkpoint_info=None, already_loaded_state_dict=None,model_name=N
         }
 
     with sd_disable_initialization.LoadStateDictOnMeta(state_dict, device=model_target_device(sd_model), weight_dtype_conversion=weight_dtype_conversion):
-        load_model_weights(sd_model, checkpoint_info, state_dict, timer)
+        load_model_weights(sd_model, checkpoint_info, state_dict, timer, vae_dir)
 
     #load lora weight:
     # if lora_path is not None:
@@ -797,27 +799,49 @@ def load_model(checkpoint_info=None, already_loaded_state_dict=None,model_name=N
             )
             sd_model.model.diffusion_model.add_adapter(unet_lora_config)
             
-            unet_lora_layers_para = torch.load(os.path.join(ckpt_dir, UNET_CKPT_NAME), map_location='cpu')
-            unet_lora_layers_para = replace_lora_keys(unet_lora_layers_para)
+            
 
+            if isinstance(ckpt_dir,list):
+                for n,checkpoint in enumerate(ckpt_dir):
+                    unet_lora_layers_para = torch.load(os.path.join(checkpoint, UNET_CKPT_NAME), map_location='cpu')
+                    unet_lora_layers_para = replace_lora_keys(unet_lora_layers_para)
+                    incompatible_keys = set_peft_model_state_dict(sd_model.model.diffusion_model, unet_lora_layers_para, adapter_name="default")
+                    if getattr(incompatible_keys, 'unexpected_keys', []) == []:
+                        print(f"loaded unet_lora_layers_para")
+                    else:
+                        print(f"unet_lora_layers has unexpected_keys: {getattr(incompatible_keys, 'unexpected_keys', None)}")
+                    
+                    inserted_attn_module_paras = torch.load(os.path.join(checkpoint, INSERTED_ATTN_CKPT_NAME), map_location='cpu')
 
-            incompatible_keys = set_peft_model_state_dict(sd_model.model.diffusion_model, unet_lora_layers_para, adapter_name="default")
-            if getattr(incompatible_keys, 'unexpected_keys', []) == []:
-                print(f"loaded unet_lora_layers_para")
+                    missing_keys, unexpected_keys = sd_model.model.diffusion_model.load_state_dict(inserted_attn_module_paras, strict=False)
+                    assert len(unexpected_keys) == 0, unexpected_keys
+                    
+                    byt5_mapper_para = torch.load(os.path.join(checkpoint, BYT5_MAPPER_CKPT_NAME), map_location='cpu')
+                    byt5_mapper.load_state_dict(byt5_mapper_para)
+                    
+                    if config.train_byt5 or n ==0:
+                        byt5_model_para = torch.load(os.path.join(checkpoint, BYT5_CKPT_NAME), map_location='cpu')
+                        byt5_model.load_state_dict(byt5_model_para)
             else:
-                print(f"unet_lora_layers has unexpected_keys: {getattr(incompatible_keys, 'unexpected_keys', None)}")
-            
-            inserted_attn_module_paras = torch.load(os.path.join(ckpt_dir, INSERTED_ATTN_CKPT_NAME), map_location='cpu')
+                unet_lora_layers_para = torch.load(os.path.join(ckpt_dir, UNET_CKPT_NAME), map_location='cpu')
+                unet_lora_layers_para = replace_lora_keys(unet_lora_layers_para)
+                incompatible_keys = set_peft_model_state_dict(sd_model.model.diffusion_model, unet_lora_layers_para, adapter_name="default")
+                if getattr(incompatible_keys, 'unexpected_keys', []) == []:
+                    print(f"loaded unet_lora_layers_para")
+                else:
+                    print(f"unet_lora_layers has unexpected_keys: {getattr(incompatible_keys, 'unexpected_keys', None)}")
+                
+                inserted_attn_module_paras = torch.load(os.path.join(ckpt_dir, INSERTED_ATTN_CKPT_NAME), map_location='cpu')
 
-            missing_keys, unexpected_keys = sd_model.model.diffusion_model.load_state_dict(inserted_attn_module_paras, strict=False)
-            assert len(unexpected_keys) == 0, unexpected_keys
-            
-            byt5_mapper_para = torch.load(os.path.join(ckpt_dir, BYT5_MAPPER_CKPT_NAME), map_location='cpu')
-            byt5_mapper.load_state_dict(byt5_mapper_para)
-            
-            if config.train_byt5:
-                byt5_model_para = torch.load(os.path.join(ckpt_dir, BYT5_CKPT_NAME), map_location='cpu')
-                byt5_model.load_state_dict(byt5_model_para)
+                missing_keys, unexpected_keys = sd_model.model.diffusion_model.load_state_dict(inserted_attn_module_paras, strict=False)
+                assert len(unexpected_keys) == 0, unexpected_keys
+                
+                byt5_mapper_para = torch.load(os.path.join(ckpt_dir, BYT5_MAPPER_CKPT_NAME), map_location='cpu')
+                byt5_mapper.load_state_dict(byt5_mapper_para)
+                
+                if config.train_byt5:
+                    byt5_model_para = torch.load(os.path.join(ckpt_dir, BYT5_CKPT_NAME), map_location='cpu')
+                    byt5_model.load_state_dict(byt5_model_para)
 
             sd_model.model.byt5_mapper = byt5_mapper
             sd_model.model.byt5_tokenizer = byt5_tokenizer

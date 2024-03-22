@@ -1,0 +1,2000 @@
+[
+    {
+        "index": 23,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"9am - 9pm\n\" in <color-32>, <font-87>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-32>, <font-15>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"+123-456-7890\n\" in <color-32>, <font-87>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"ORDER\nNOW\n\" in <color-32>, <font-87>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"NOW OPEN\n\" in <color-32>, <font-87>. "
+            },
+            {
+                "layer_num": 7,
+                "caption": "Text \"only \n\" in <color-32>, <font-247>. "
+            },
+            {
+                "layer_num": 8,
+                "caption": "Text \"$5\n\" in <color-32>, <font-247>. "
+            },
+            {
+                "layer_num": 10,
+                "caption": "Text \"only \n\" in <color-32>, <font-247>. "
+            },
+            {
+                "layer_num": 11,
+                "caption": "Text \"$5\n\" in <color-32>, <font-247>. "
+            },
+            {
+                "layer_num": 13,
+                "caption": "Text \"only \n\" in <color-32>, <font-247>. "
+            },
+            {
+                "layer_num": 14,
+                "caption": "Text \"$5\n\" in <color-32>, <font-247>. "
+            },
+            {
+                "layer_num": 16,
+                "caption": "Text \"best price!\n\" in <color-32>, <font-87>. "
+            }
+        ]
+    },
+    {
+        "index": 29,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"May this special month brings peace, happiness and prosperityto everyone. \n\" in <color-1>, <font-34>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <font-34>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Ramadan\nMubarak\n\" in <color-1>, <font-21>. "
+            }
+        ]
+    },
+    {
+        "index": 31,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"chicken with black pepper sauce\n\" in <color-46>, <font-237>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"special menu\n\" in <color-46>, <font-0>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"This black pepper chicken is crispy, sticky, saucy, and sweet, which are ideal aspects of a wonderful chicken dish.\n\" in <color-46>, <font-0>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"See the Recipe\n\" in <color-46>, <font-138>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"Suhoor\n\" in <color-26>, <font-237>. "
+            }
+        ]
+    },
+    {
+        "index": 35,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"New Year Countdown\n\" in <color-1>, <font-72>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"30\n\" in <color-1>, <font-54>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"10\n\" in <color-1>, <font-54>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"minutes\n\" in <color-1>, <font-54>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"hours\n\" in <color-1>, <font-54>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"days\n\" in <color-1>, <font-54>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"04\n\" in <color-1>, <font-54>. "
+            }
+        ]
+    },
+    {
+        "index": 36,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"w\no\nm\ne\nn\n's\n\" in <color-1>, <font-22>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"you are magical\n\" in <color-1>, <font-173>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"you are capable\n\" in <color-1>, <font-173>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"International\n\" in <color-1>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"day\n\" in <color-1>, <font-22>. "
+            }
+        ]
+    },
+    {
+        "index": 43,
+        "layers": [
+            {
+                "layer_num": 3,
+                "caption": "Text \"@reallygreatsite\n\" in <font-34>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"May Allah answer all yourprayers \nin this holy month\nof Ramadan.\n\" in <font-34>. "
+            },
+            {
+                "layer_num": 12,
+                "caption": "Text \"Ramadan\n\" in <color-3>, <font-380>. "
+            },
+            {
+                "layer_num": 13,
+                "caption": "Text \"kareeM\n\" in <color-1>, <font-34>. "
+            }
+        ]
+    },
+    {
+        "index": 44,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Jamie Chastain House\n\" in <color-0>, <font-102>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"123 Anywhere St., Any City\n\" in <color-0>, <font-102>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Your Are Invited\n\" in <color-0>, <font-102>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Sunday 5:00PM - 10:00PM\n\" in <color-0>, <font-102>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"22 January, 2022\n\" in <color-0>, <font-102>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"New Year\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"PArty\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 7,
+                "caption": "Text \"Chinese\n\" in <color-0>. "
+            }
+        ]
+    },
+    {
+        "index": 45,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"your logo\n\" in <color-1>, <font-0>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Discount up to 50%\n\" in <color-1>, <font-0>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Happy shopping\n\" in <font-250>. "
+            }
+        ]
+    },
+    {
+        "index": 48,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"- Holy Prophet Muhammad -\n\" in <color-14>, <font-13>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"\u201cWhosoever recites only one \u2018Ayat\u2019 in \nHoly Ramadhan, he will be awarded as if \nhe had recited the full Qur\u2019an in other months.\u201d\n\" in <color-14>, <font-13>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Kareem\n\" in <color-26>, <font-162>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Ramadhan\n\" in <color-34>, <font-159>. "
+            }
+        ]
+    },
+    {
+        "index": 49,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. \n\" in <color-7>, <font-43>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"@reallygreatsite\n\" in <color-1>, <font-139>. "
+            }
+        ]
+    },
+    {
+        "index": 4,
+        "layers": [
+            {
+                "layer_num": 7,
+                "caption": "Text \"Lake\n\" in <color-10>, <font-7>. "
+            },
+            {
+                "layer_num": 11,
+                "caption": "Text \"Mountain\n\" in <color-10>, <font-7>. "
+            },
+            {
+                "layer_num": 15,
+                "caption": "Text \"Choose your favorite place that\nyou like the most!\n\" in <color-65>, <font-7>. "
+            },
+            {
+                "layer_num": 16,
+                "caption": "Text \"This or That\n\" in <color-10>, <font-133>. "
+            }
+        ]
+    },
+    {
+        "index": 59,
+        "layers": [
+            {
+                "layer_num": 4,
+                "caption": "Text \"Ramadan\nKareem\n\" in <color-0>, <font-475>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"May the blessings of Ramadan pour\nyour life with happiness,\ntogetherness and\ntriumphs.\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"@reallygreatsite\n\" in <color-0>. "
+            }
+        ]
+    },
+    {
+        "index": 60,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"+123-456-7890\n\" in <color-0>, <font-0>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"delivery service\n\" in <color-13>, <font-0>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Order Now\n\" in <color-12>, <font-0>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Special\n\" in <color-14>, <font-363>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"Iftar Menu\n\" in <color-0>, <font-126>. "
+            }
+        ]
+    },
+    {
+        "index": 61,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"like a Christmas tree\n\" in <color-14>, <font-64>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"my life\n\" in <color-14>, <font-118>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"You light up \n\" in <color-14>, <font-64>. "
+            }
+        ]
+    },
+    {
+        "index": 66,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-48>, <font-138>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"ORDER NOW\n\" in <color-0>, <font-138>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"STORE\n\" in <color-0>, <font-138>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Hand Bag\n\" in <color-48>, <font-2>. "
+            }
+        ]
+    },
+    {
+        "index": 68,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Counting Down Lunar Party\n\" in <color-22>, <font-16>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"29\n\" in <color-22>, <font-16>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"minutes\n\" in <color-22>, <font-76>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"11\n\" in <color-22>, <font-16>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Hours\n\" in <color-22>, <font-76>. "
+            },
+            {
+                "layer_num": 7,
+                "caption": "Text \"03\n\" in <color-22>, <font-16>. "
+            },
+            {
+                "layer_num": 8,
+                "caption": "Text \"Days\n\" in <color-22>, <font-76>. "
+            }
+        ]
+    },
+    {
+        "index": 6,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"& happy new year\n\" in <color-21>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"merry\nchristmas\n\" in <color-21>, <font-314>. "
+            }
+        ]
+    },
+    {
+        "index": 70,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"@reallygreatsite\n\" in <color-1>, <font-9>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"30% Off\n\" in <color-1>, <font-9>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Discount Up To\n\" in <color-1>, <font-9>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Special Offer\n\" in <color-1>, <font-9>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"make up sale\n\" in <color-1>, <font-10>. "
+            }
+        ]
+    },
+    {
+        "index": 71,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Wishing you good health \nand fortune in 2022\n\" in <color-13>, <font-250>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Happy\nChinese\nNew Year\n\" in <color-13>, <font-393>. "
+            }
+        ]
+    },
+    {
+        "index": 73,
+        "layers": [
+            {
+                "layer_num": 12,
+                "caption": "Text \"We will deliver the food to your Place\n\" in <color-14>. "
+            },
+            {
+                "layer_num": 13,
+                "caption": "Text \"Delivery\n\" in <color-14>. "
+            },
+            {
+                "layer_num": 14,
+                "caption": "Text \"+123-456-7890\n\" in <color-14>. "
+            },
+            {
+                "layer_num": 15,
+                "caption": "Text \"Contact Us\n\" in <color-14>. "
+            },
+            {
+                "layer_num": 16,
+                "caption": "Text \"Food\n\" in <color-14>. "
+            }
+        ]
+    },
+    {
+        "index": 80,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"06.00 pm\n\" in <color-17>, <font-65>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"April 12, 2020\n\" in <color-17>, <font-65>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Please Come And Join Us For\nSpecial Dinner\n\" in <color-2>, <font-65>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"@reallygreatsite\n\" in <color-2>, <font-65>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Invitation\n\" in <color-17>, <font-33>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Iftar\n\" in <color-17>, <font-126>. "
+            }
+        ]
+    },
+    {
+        "index": 81,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-0>, <font-47>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"work together\n\" in <color-0>, <font-20>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Wear your mask.\n\" in <color-0>, <font-47>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Help stop the spread of \nCovid-19. \n\" in <color-104>, <font-47>. "
+            }
+        ]
+    },
+    {
+        "index": 84,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Gong xi fa Cai\n\" in <font-7>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Lunar New year\n\" in <font-97>. "
+            }
+        ]
+    },
+    {
+        "index": 85,
+        "layers": [
+            {
+                "layer_num": 2,
+                "caption": "Text \"holiday season\n\" in <color-25>, <font-64>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"have a\n\" in <color-25>, <font-64>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"magical\n\" in <color-26>, <font-357>. "
+            }
+        ]
+    },
+    {
+        "index": 87,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Country\n\" in <color-0>, <font-383>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Social Media\n\" in <color-0>, <font-0>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Highlight Cover\n\" in <color-0>, <font-0>. "
+            }
+        ]
+    },
+    {
+        "index": 88,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"@reallygreatsite\n\" in <color-1>, <font-25>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"February 19\n\" in <color-1>, <font-25>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"national lash day\n\" in <font-25>. "
+            }
+        ]
+    },
+    {
+        "index": 89,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Believe in the magic of the season\n\" in <font-240>. "
+            }
+        ]
+    },
+    {
+        "index": 96,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Help The Mouse Find The Cheese!\n\" in <color-3>, <font-11>. "
+            }
+        ]
+    },
+    {
+        "index": 97,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Upgrading iman in this holy month\n\" in <font-3>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"DAY 17\n\". "
+            }
+        ]
+    },
+    {
+        "index": 99,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"2022\n\" in <color-13>, <font-44>. "
+            },
+            {
+                "layer_num": 8,
+                "caption": "Text \"lunar new year\n\" in <color-13>, <font-234>. "
+            },
+            {
+                "layer_num": 9,
+                "caption": "Text \"Happy\n\" in <color-13>, <font-29>. "
+            }
+        ]
+    },
+    {
+        "index": 0,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-6>, <font-1>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Discount\n\" in <color-6>, <font-1>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Mocktail Lime\n\" in <color-2>, <font-191>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Special\n\" in <color-2>, <font-403>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Summer\n\" in <color-7>, <font-191>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"50%\n\" in <color-6>, <font-403>. "
+            }
+        ]
+    },
+    {
+        "index": 11,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Off\n\" in <color-2>, <font-195>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"30%\n\" in <color-2>, <font-201>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Up To\n\" in <color-2>, <font-195>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-2>, <font-101>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Buy Now\n\" in <color-0>, <font-195>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Everything for Your Pet\n\" in <color-2>, <font-97>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"Pet Shop\n\" in <color-2>, <font-201>. "
+            }
+        ]
+    },
+    {
+        "index": 12,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Sale \n\" in <color-24>, <font-113>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Sale \n\" in <color-24>, <font-113>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Sale \n\" in <color-24>, <font-113>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Sale \n\" in <color-24>, <font-113>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Sale \n\" in <color-24>, <font-113>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Sale \n\" in <color-24>, <font-113>. "
+            }
+        ]
+    },
+    {
+        "index": 13,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-6>, <font-0>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"send your resume\n\" in <color-6>, <font-0>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"we are hiring\n\" in <color-14>, <font-4>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Apply now\n\" in <color-6>, <font-0>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"area manager\n\" in <color-6>, <font-0>. "
+            }
+        ]
+    },
+    {
+        "index": 14,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Only at\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"reallygreatsite.com\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Halloween\nSale\n\" in <color-1>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"50%\n\" in <color-1>. "
+            }
+        ]
+    },
+    {
+        "index": 15,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"@reallygreatsite\n\" in <color-33>, <font-6>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"17 - 20\napril 2022\n\" in <color-13>, <font-6>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"80%\n\" in <color-33>, <font-87>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"disc\n\" in <color-13>, <font-6>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Easter Day's\n\" in <color-33>, <font-75>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Sale\n\" in <color-13>, <font-97>. "
+            }
+        ]
+    },
+    {
+        "index": 16,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"February 14\n\" in <color-1>, <font-2>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-1>, <font-2>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"special\n\" in <color-1>, <font-2>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"today only\n\" in <color-1>, <font-2>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Valentine Gift\n\" in <font-117>. "
+            }
+        ]
+    },
+    {
+        "index": 17,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Visit our store now @reallygreatsite\n\" in <color-0>, <font-19>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"50% off all item\n\" in <color-1>, <font-19>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Pot Plant Sale\n\" in <color-1>, <font-3>. "
+            }
+        ]
+    },
+    {
+        "index": 18,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"up to 70% off\n\" in <color-11>, <font-60>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"only this weekend\n\" in <color-11>, <font-60>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"SHOP\nNOW\n\" in <color-11>, <font-60>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Cosmetics Sale\n\" in <color-11>, <font-244>. "
+            }
+        ]
+    },
+    {
+        "index": 19,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"11\nDec\n\" in <color-0>, <font-26>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-0>, <font-26>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"123-456-7890\n\" in <color-0>, <font-26>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"hello@reallygreatsite.com\n\" in <color-0>, <font-26>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"International\n\" in <color-0>, <font-26>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Mountain Day\n\" in <color-0>, <font-452>. "
+            }
+        ]
+    },
+    {
+        "index": 20,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"2022\n\" in <color-2>, <font-35>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-2>, <font-35>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"13 February \n\" in <color-2>, <font-35>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"World Radio Day\n\" in <color-2>, <font-35>. "
+            }
+        ]
+    },
+    {
+        "index": 1,
+        "layers": [
+            {
+                "layer_num": 9,
+                "caption": "Text \"123 Anywhere St.,\nAny City,\nST 12345\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 10,
+                "caption": "Text \"Store\nLocation\n\" in <color-92>, <font-319>. "
+            }
+        ]
+    },
+    {
+        "index": 21,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"50%\noff*\n\" in <color-0>, <font-0>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"only on @reallygreatsite\n\" in <color-43>, <font-0>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Autumn Online Sale\n\" in <color-0>, <font-208>. "
+            }
+        ]
+    },
+    {
+        "index": 22,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"link in bio\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"official website\n\" in <color-92>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Visit Now\nGet Special\nOffer\n\" in <color-0>, <font-319>. "
+            }
+        ]
+    },
+    {
+        "index": 24,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"123 Anywhere St., Any City\n\" in <color-1>, <font-21>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"+123-456-7890\n\" in <color-1>, <font-316>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"sale\nsale\n\" in <color-20>, <font-21>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Discount up to\n\" in <color-1>, <font-21>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-2>, <font-21>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"30% off\n\" in <color-1>, <font-21>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"black friday\nsale\n\" in <color-1>, <font-316>. "
+            }
+        ]
+    },
+    {
+        "index": 25,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-0>, <font-4>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"10.10\n\" in <color-0>, <font-0>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"shop now\n\" in <color-0>, <font-4>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"50%\noff\n\" in <color-0>, <font-4>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"save up to\n\" in <color-0>, <font-0>. "
+            }
+        ]
+    },
+    {
+        "index": 26,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"shop now\n\" in <color-0>, <font-394>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-5>, <font-202>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"use code iwd2022\n\" in <color-5>, <font-394>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"10%off\n\" in <color-5>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"International\n\" in <color-5>, <font-202>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Women's Day\n\" in <color-5>, <font-84>. "
+            }
+        ]
+    },
+    {
+        "index": 27,
+        "layers": [
+            {
+                "layer_num": 2,
+                "caption": "Text \"night routine recipe\n\" in <color-0>, <font-45>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"aromatherapy candle on\n\" in <color-7>, <font-45>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Keep a daily reflection journal\n\" in <color-7>, <font-45>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"apply skincare\n\" in <color-7>, <font-45>. "
+            },
+            {
+                "layer_num": 21,
+                "caption": "Text \"listen to sleep playlist\n\" in <color-7>, <font-45>. "
+            },
+            {
+                "layer_num": 24,
+                "caption": "Text \"get some tea\n\" in <color-7>, <font-45>. "
+            }
+        ]
+    },
+    {
+        "index": 28,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"reallygreatsite.com\n\" in <color-69>, <font-99>. "
+            },
+            {
+                "layer_num": 12,
+                "caption": "Text \"Today's all about celebrating togetherness and inclusiveness for children across the globe.\n\" in <color-16>, <font-99>. "
+            }
+        ]
+    },
+    {
+        "index": 30,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"sunflower - julia\nold but gold - dunn\nthis holiday - turnplay\ngood day - hurricane\n\" in <color-32>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Sunday\nMorning\nPlaylist\n\" in <color-0>, <font-319>. "
+            }
+        ]
+    },
+    {
+        "index": 32,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"May Flowers\n\" in <color-1>, <font-17>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"bring forth\n\" in <color-1>, <font-421>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"April Showers\n\" in <color-1>, <font-17>. "
+            }
+        ]
+    },
+    {
+        "index": 2,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"*terms and conditions apply\n\" in <color-91>, <font-3>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"UP TO 50% OFF\n\" in <color-2>, <font-10>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"super sale\n\" in <color-0>, <font-10>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"X-Mas\n\" in <color-2>, <font-234>. "
+            }
+        ]
+    },
+    {
+        "index": 33,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"up to 40% off\n\" in <color-13>, <font-66>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"flash sale\n\" in <color-13>, <font-426>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"lunar new year\n\" in <color-13>, <font-66>. "
+            }
+        ]
+    },
+    {
+        "index": 34,
+        "layers": [
+            {
+                "layer_num": 2,
+                "caption": "Text \"Lorem ipsum dolor sit amet, consectetur\nadipiscing elit. Ut diam tellus,\nelementum ac facilisis et\n\" in <color-1>, <font-24>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"up to 50% off\n\" in <color-1>, <font-24>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"super sale\n\" in <color-1>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Autumn\n\" in <color-1>. "
+            }
+        ]
+    },
+    {
+        "index": 37,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"123 Anywhere St., Any City, ST 12345\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Thursday | 25th November | 9:00 pm\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Thanksgiving dinner\n\" in <color-78>, <font-319>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"you are invited!\n\" in <color-0>. "
+            }
+        ]
+    },
+    {
+        "index": 38,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"tis the season\n\" in <color-0>, <font-244>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-0>, <font-20>. "
+            },
+            {
+                "layer_num": 8,
+                "caption": "Text \"TO BUY SOMEONE A GIFt\n\" in <color-0>, <font-2>. "
+            }
+        ]
+    },
+    {
+        "index": 39,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Up to\n50% off\n\" in <color-15>, <font-0>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Happy spring sale\n\" in <color-15>, <font-133>. "
+            }
+        ]
+    },
+    {
+        "index": 40,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"And Happy New Year\n\" in <color-0>, <font-3>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Merry Christmas\n\" in <color-0>, <font-33>. "
+            }
+        ]
+    },
+    {
+        "index": 41,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Special Sale\n\" in <color-2>, <font-33>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-0>, <font-0>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"$400\n\" in <color-2>, <font-0>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"White Sofa \n\" in <color-2>, <font-0>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Social media can also be used to disseminate interesting facts, true stories, and other useful information.\n\" in <color-2>, <font-0>. "
+            },
+            {
+                "layer_num": 9,
+                "caption": "Text \"$800\n\" in <color-2>, <font-0>. "
+            }
+        ]
+    },
+    {
+        "index": 42,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-71>, <font-25>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"22 march\n\" in <color-71>, <font-25>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"World Water Day\n\" in <color-71>, <font-25>. "
+            }
+        ]
+    },
+    {
+        "index": 3,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"national burger day\n\" in <color-58>, <font-129>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"are you ready ? \n\" in <color-0>, <font-3>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"enjoy a buy one\nget one promo at ofline store\n\" in <color-0>, <font-3>. "
+            }
+        ]
+    },
+    {
+        "index": 46,
+        "layers": [
+            {
+                "layer_num": 2,
+                "caption": "Text \"15 August 2024\n\" in <color-1>, <font-168>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"opening Soon\n\" in <color-1>, <font-168>. "
+            },
+            {
+                "layer_num": 9,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-1>, <font-168>. "
+            }
+        ]
+    },
+    {
+        "index": 47,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \" Sale\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Christmas\n\" in <color-0>, <font-77>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Up to 50% Off\n\" in <color-0>, <font-7>. "
+            }
+        ]
+    },
+    {
+        "index": 50,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-0>, <font-53>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Pastel Bikini Collection\n\" in <color-2>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Up\nTo\n\" in <color-1>, <font-242>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"70%\n\" in <color-1>, <font-156>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Discount\n\" in <color-1>, <font-242>. "
+            },
+            {
+                "layer_num": 10,
+                "caption": "Text \"%\n\" in <font-0>. "
+            },
+            {
+                "layer_num": 11,
+                "caption": "Text \"Summer Sale Summer Sale \n\" in <font-15>. "
+            }
+        ]
+    },
+    {
+        "index": 51,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Masks and skincare\n\" in <color-2>, <font-59>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"what are you doing today?\n\" in <color-3>, <font-59>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Me Time Checklist\n\" in <color-3>, <font-201>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"lay down all day\n\" in <color-2>, <font-59>. "
+            },
+            {
+                "layer_num": 7,
+                "caption": "Text \"shopping checkout\n\" in <color-2>, <font-59>. "
+            },
+            {
+                "layer_num": 8,
+                "caption": "Text \"watching movies\n\" in <color-2>, <font-59>. "
+            }
+        ]
+    },
+    {
+        "index": 52,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Year Of The Tiger\n\" in <color-14>, <font-20>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"New Year\n\" in <color-14>, <font-88>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Happy\n\" in <color-14>, <font-88>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"lunar\n\" in <color-14>, <font-88>. "
+            }
+        ]
+    },
+    {
+        "index": 53,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"I am right where I should be\n\" in <color-112>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"at this moment.\n\" in <color-112>. "
+            }
+        ]
+    },
+    {
+        "index": 54,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"reallygreatsite.com \n\" in <color-2>, <font-6>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec imperdiet nunc at leo vestibulum, sit amet dictum purus vulputate. Donec eu velit tortor.\n\" in <color-4>, <font-3>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"suhoor time\n\" in <color-4>, <font-0>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Happy\n\" in <color-4>, <font-0>. "
+            }
+        ]
+    },
+    {
+        "index": 56,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"OFF\n\" in <color-22>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"25%\n\" in <color-10>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"fresh orange\n\" in <color-10>, <font-133>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"DRINK SALE\n\" in <color-10>. "
+            }
+        ]
+    },
+    {
+        "index": 57,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"up to\n70%\n\" in <color-1>, <font-57>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"order now\n\" in <color-1>, <font-70>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"@reallygreatsite\n\" in <color-1>, <font-3>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Fashion Sale\n\" in <color-1>, <font-33>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"ramadan\n\" in <color-1>. "
+            }
+        ]
+    },
+    {
+        "index": 58,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"January is national hobby month\n\" in <color-49>, <font-201>. "
+            }
+        ]
+    },
+    {
+        "index": 62,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Happy\n\" in <color-10>, <font-110>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-47>, <font-25>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"13 February \n\" in <color-2>, <font-25>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"World Radio Day\n\" in <color-2>, <font-25>. "
+            }
+        ]
+    },
+    {
+        "index": 5,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"7pm - until end\n\" in <color-0>, <font-211>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"at 123 anywhere st ., any city\n\" in <color-0>, <font-211>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"february 14, 2022\n\" in <color-0>, <font-211>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"join us\n\" in <color-0>, <font-211>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Party\n\" in <color-0>, <font-33>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"valentine's\n\" in <color-0>, <font-211>. "
+            }
+        ]
+    },
+    {
+        "index": 63,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"@reallygreatsite\n\" in <color-0>, <font-304>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"national hobby\nmonth\n\" in <color-3>, <font-45>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Taking pictures is\nsavoring life\nintesely\n\" in <color-12>, <font-304>. "
+            }
+        ]
+    },
+    {
+        "index": 64,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Curse the darkness\n\" in <color-31>, <font-407>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Than To\n\" in <color-31>, <font-407>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"It's Better To\n\" in <color-31>, <font-407>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Light a candle\n\" in <color-31>, <font-407>. "
+            }
+        ]
+    },
+    {
+        "index": 65,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"@reallygreatsite\n\" in <color-16>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"1443 Hijiriyah\n\" in <color-16>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Happy\n\" in <color-16>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Eid al-Adha\n\" in <color-16>. "
+            }
+        ]
+    },
+    {
+        "index": 67,
+        "layers": [
+            {
+                "layer_num": 6,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-12>, <font-289>. "
+            },
+            {
+                "layer_num": 7,
+                "caption": "Text \"12-14 February\n\" in <color-22>, <font-445>. "
+            },
+            {
+                "layer_num": 8,
+                "caption": "Text \"Up To 50% Discount\n\" in <color-12>, <font-289>. "
+            },
+            {
+                "layer_num": 9,
+                "caption": "Text \"Happy\n\" in <color-12>, <font-289>. "
+            },
+            {
+                "layer_num": 10,
+                "caption": "Text \"Valentine's\nSale!\n\" in <color-22>, <font-445>. "
+            }
+        ]
+    },
+    {
+        "index": 69,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"clearance sale\n\" in <color-81>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Chinese\nNew Year\n\" in <color-81>, <font-333>. "
+            },
+            {
+                "layer_num": 7,
+                "caption": "Text \"up to 50% off\n\" in <color-12>. "
+            }
+        ]
+    },
+    {
+        "index": 7,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"up to 30% off\n\" in <color-2>, <font-7>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Sale \n\" in <color-2>, <font-7>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Happy Easter Day\n\" in <color-2>, <font-128>. "
+            }
+        ]
+    },
+    {
+        "index": 74,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"@reallygreatsite\n\" in <color-6>, <font-274>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"1443 h\n\" in <color-6>, <font-126>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"\" Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam leo tellus, placerat bibendum ex vel, rutrum eleifend libero. \"\n\" in <color-6>, <font-274>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Kareem\n\" in <color-6>, <font-126>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"Ramadan\n\" in <color-6>, <font-126>. "
+            }
+        ]
+    },
+    {
+        "index": 75,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"shop now\n\" in <color-8>, <font-24>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"70 % off\n\" in <color-14>, <font-24>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Happy Halloween\n\" in <color-57>, <font-252>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"special offer\n\" in <color-8>, <font-24>. "
+            }
+        ]
+    },
+    {
+        "index": 77,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"reallygreatsite.com\n\" in <color-67>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"We waste all the water and energy that went into producing it.\n\" in <color-67>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"we don't just waste a meal.\n\" in <color-19>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"When we throw out food,\n\" in <color-19>. "
+            }
+        ]
+    },
+    {
+        "index": 78,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"UP TO 50% OFF\n\" in <color-3>, <font-2>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Ramadan Sale\n\" in <color-3>, <font-380>. "
+            }
+        ]
+    },
+    {
+        "index": 79,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"reallygreatsite.com\n\" in <color-5>, <font-71>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Shop now at\n\" in <color-5>, <font-71>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Off\n\" in <color-31>, <font-71>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"50%\n\" in <color-31>, <font-71>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Promotion\n\" in <color-31>, <font-71>. "
+            },
+            {
+                "layer_num": 11,
+                "caption": "Text \"Sale\n\" in <color-73>, <font-71>. "
+            },
+            {
+                "layer_num": 12,
+                "caption": "Text \"Midnight\n\" in <color-14>, <font-71>. "
+            }
+        ]
+    },
+    {
+        "index": 8,
+        "layers": [
+            {
+                "layer_num": 2,
+                "caption": "Text \"Claim Your Free Gifts!\n\" in <color-7>, <font-3>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Shopping Day\n\" in <color-7>, <font-10>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"6.6\n\" in <color-0>, <font-10>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"Happy\n\" in <color-7>, <font-10>. "
+            }
+        ]
+    },
+    {
+        "index": 83,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"let's respect each other, especially women\n\" in <color-61>, <font-25>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"International \n\" in <color-61>, <font-25>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Women\u2019s Day\n\" in <color-61>, <font-45>. "
+            }
+        ]
+    },
+    {
+        "index": 90,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-0>, <font-5>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"your\nlogo\n\" in <color-0>, <font-5>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Discount up to 10% off\n\" in <color-62>, <font-5>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"boby's\nLaundry\nService\n\" in <color-0>, <font-7>. "
+            }
+        ]
+    },
+    {
+        "index": 91,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"@reallygreatsite\n\" in <color-0>, <font-4>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"or\n\" in <color-0>, <font-4>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"scan barcode\n\" in <color-0>, <font-4>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"valid for june 2022\n\" in <color-0>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"$250\n\" in <color-84>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"gift\n\" in <color-87>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"voucher\n\" in <color-87>. "
+            }
+        ]
+    },
+    {
+        "index": 92,
+        "layers": [
+            {
+                "layer_num": 1,
+                "caption": "Text \"Announcement\n\" in <color-2>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Every Wednesday, all students are required to bring reading books\n\" in <color-2>, <font-59>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Wednesday reading\n\" in <color-2>, <font-137>. "
+            },
+            {
+                "layer_num": 4,
+                "caption": "Text \"@reallygreatsite\n\" in <color-2>. "
+            }
+        ]
+    },
+    {
+        "index": 9,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"\nCAnt wait the moment\n\" in <color-1>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Hot \noffer\n\" in <color-1>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"December\nIssue\n\" in <color-1>, <font-88>. "
+            }
+        ]
+    },
+    {
+        "index": 94,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"The Dawn\n\" in <color-31>, <font-407>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Is Just Before\n\" in <color-31>, <font-407>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"REmember\n\" in <color-31>, <font-407>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"The darkest hour\n\" in <color-31>, <font-407>. "
+            }
+        ]
+    },
+    {
+        "index": 95,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Up to 50% SALE\n\" in <color-6>, <font-3>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Special Offer\n\" in <color-6>, <font-3>. "
+            }
+        ]
+    },
+    {
+        "index": 98,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"Discount up to 50% off!\n\" in <color-0>, <font-1>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-0>, <font-1>. "
+            },
+            {
+                "layer_num": 2,
+                "caption": "Text \"Shop now\n\" in <color-5>, <font-1>. "
+            },
+            {
+                "layer_num": 3,
+                "caption": "Text \"Sale\n\" in <color-33>, <font-12>. "
+            }
+        ]
+    },
+    {
+        "index": 10,
+        "layers": [
+            {
+                "layer_num": 0,
+                "caption": "Text \"www.reallygreatsite.com\n\" in <color-30>, <font-19>. "
+            },
+            {
+                "layer_num": 1,
+                "caption": "Text \"Followers\n\" in <color-87>, <font-45>. "
+            },
+            {
+                "layer_num": 5,
+                "caption": "Text \"thank you\n\" in <color-30>, <font-45>. "
+            },
+            {
+                "layer_num": 6,
+                "caption": "Text \"5k\n\" in <color-87>, <font-45>. "
+            }
+        ]
+    }
+]

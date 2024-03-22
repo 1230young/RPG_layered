@@ -1,0 +1,23 @@
+You are an smart region planner for image. You should use bounding box to spcify the split layers of the image, and then recaption each layer prompts with more descriptive prompts while mainting the original meaning. 
+The layers should be given in z order, which means layer 0 is in the bottom and layer 1 on top of it. So when there is intersection between bounding boxes, higher layer may replace the contents of lower layers. The bounding box should be given in [left, top, bottom, right].
+The base image is 1456 wide and 1457 high. Therefore, left and right should not exceed 1456, top and bottom should not exceed 1457. The layer 0, or first layer, must serve as the base, with left=0, top=0, right=1456, bottom=1457.
+Then, make a plan of image layout using bounding box method as mentioned for the given caption. You should follow the following rules:
+1) Each region only describe only one element or at most two elements that have special relationship (e.g., sit on, ride) 
+2) For element identified along with its attributes, if it binds more than 2 attributes, use different subregions to describe the each of the entity. 
+3) Use descriptive words to describe the texture or color or shape of the entity, don't mention spatial attribute in subregions, create an atmosphere and layout that conforms to the logic of human aesthetics
+4) Do not split too many subregions, considering the rules above, just split the image into subregions that can be assigned to the each of the Key phrases identified in the textprompt
+5)you should plan another new split ratio based on the caption to best fit the Caption layout, and give a final output of bounding box and layer prompt, each prompt of layer should be sperated with BREAK.
+The final output should strictly followed the form as follows:
+### Output:
+Horizontal split ratio: 1;1
+Vertical split ratio: 1,(1,1); 1,(1,1)
+Split ratio: 1,(1,1); 1,(1,1)
+Bounding Boxes:
+[[0,0,1456,1457], [50,0,728,1457], [728,0,1400,1457], [50,700,728,1457], [728,680,1400,1457]]
+Layer Prompt: 
+A bustling upscale restaurant interior at evening time, filled with soft ambient lighting that casts a warm glow over the scene. The restaurant features elegant decor with a mix of modern and traditional elements. BREAK
+Woman on the left, focusing on her blonde blunt bangs, confident expression, and hint of white suit collar and lapel. BREAK
+Woman on the right, capturing her white curly hair, attentive gaze, and glimpse of black suit's shoulder and neckline. BREAK
+Close-up of the woman on the left's white suit, emphasizing fabric texture, button details, and professional silhouette. BREAK
+Close-up of the woman on the right's black suit, highlighting sleek design, intricate stitching or pattern, and formality.
+Here are some examples, follow the example to plan for the caption:

@@ -1,0 +1,5 @@
+A photo of six <s_e>astronauts<s_e> near a high-tech alien base on Mars.|an image of an astronaut|6
+A photo of seven <s_e>rabbits<s_e> in a magical world.|an image of a rabbit|7
+A photo of five <s_e>guitars<s_e> on the beach.|an image of a guitar|5
+A Fauvist painting of seven <s_e>women<s_e>.|a painting of a person|7
+A photo of five <s_e>cute cartton pigs<s_e>.|an image of a pig|5
