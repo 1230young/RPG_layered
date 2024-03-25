@@ -386,7 +386,7 @@ if __name__ == "__main__":
                 sampler_index=sampler_index
                 )
                 l=len(image)
-                target_dirs=["generated_imgs","/pyy/openseg_blob/yuyang/code/RPG"]
+                target_dirs=["generated_imgs"]
                 for tar_dir in target_dirs:
                     for i in range(len(image)):
                         if use_layer:
@@ -399,6 +399,12 @@ if __name__ == "__main__":
                             file_name = f"{appendix}_image_{timestamp}.png"
                             image_path = f"generated_imgs/{file_name}"
                             image[i].save(image_path)
+                            index=index_list[n]
+                            draw_bboxes=bboxes[n]
+                            source_dir=tar_dir+"/"+directory
+                            target_dir=source_dir+"_bbox"
+                            draw_bbox(index,draw_bboxes,source_dir,target_dir)
+
                             item={image_path:{"text_prompt":user_prompt, "regional_prompt":regional_prompt, "split_ratio":split_ratio, "GPTprompt":textprompt}}
                             log_json.update(item)
 
@@ -407,16 +413,16 @@ if __name__ == "__main__":
                             json.dump(log_json, f, indent=4)
 
 
-            if opt.config_dir is not None and opt.ckpt_dir is not None:
-                data_draw_bbox=load_intention_output_data(all=True)
-            else:
-                data_draw_bbox=load_inference_data()
-            for item_draw_bbox in data_draw_bbox:
-                index=item_draw_bbox['index']
-                draw_bboxes=item_draw_bbox['bboxes']
-                source_dir=target_dirs[-1]+"/"+directory
-                target_dir=source_dir+"_bbox"
-                draw_bbox(index,draw_bboxes,source_dir,target_dir)
+            # if opt.config_dir is not None and opt.ckpt_dir is not None:
+            #     data_draw_bbox=load_intention_output_data(all=True)
+            # else:
+            #     data_draw_bbox=load_inference_data()
+            # for item_draw_bbox in data_draw_bbox:
+            #     index=item_draw_bbox['index']
+            #     draw_bboxes=item_draw_bbox['bboxes']
+            #     source_dir=target_dirs[-1]+"/"+directory
+            #     target_dir=source_dir+"_bbox"
+            #     draw_bbox(index,draw_bboxes,source_dir,target_dir)
 
 
 

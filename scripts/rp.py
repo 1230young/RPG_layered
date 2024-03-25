@@ -178,7 +178,7 @@ def compress_components(l):
     
 class Script(modules.scripts.Script):
     def __init__(self,active = False,mode = "Matrix",calc = "Attention",h = 0, w =0, debug = False, debug2 = False, usebase = False, 
-    usecom = False, usencom = False, batch = 1,isxl = False, lstop=0, lstop_hr=0, diff = None, use_layer = False, bboxes = None):
+    usecom = False, usencom = False, batch = 1,isxl = False, lstop=0, lstop_hr=0, diff = None, use_layer = False, bboxes = None, merge_ratio=1):
         self.active = active
         if mode == "Columns": mode = "Horizontal"
         if mode == "Rows": mode = "Vertical"
@@ -228,6 +228,7 @@ class Script(modules.scripts.Script):
         self.condi = 0
         self.use_layer = use_layer
         self.bboxes = bboxes
+        self.merge_ratio = merge_ratio
 
         self.used_prompt = ""
         self.logprops = ["active","mode","usebase","usecom","usencom","batch_size","isxl","h","w","aratios",
@@ -379,7 +380,7 @@ class Script(modules.scripts.Script):
                 usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask, lstop, lstop_hr, flipper]
 
     def process(self, p, active, a_debug , rp_selected_tab, mmode, xmode, pmode, aratios, bratios,
-                usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask, lstop, lstop_hr, flipper, use_layer=False, bboxes=None):
+                usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask, lstop, lstop_hr, flipper, use_layer=False, bboxes=None, merge_ratio=1):
         if type(options) is bool:
             options = ["disable convert 'AND' to 'BREAK'"] if options else []
         elif type(options) is str:
@@ -450,7 +451,7 @@ class Script(modules.scripts.Script):
         if flipper:aratios = changecs(aratios)
 
         self.__init__(active, tabs2mode(rp_selected_tab, mmode, xmode, pmode) ,calcmode ,p.height, p.width, debug, debug2,
-        usebase, usecom, usencom, p.batch_size, hasattr(shared.sd_model,"conditioner"),lstop, lstop_hr, diff = diff, use_layer=use_layer, bboxes=bboxes)
+        usebase, usecom, usencom, p.batch_size, hasattr(shared.sd_model,"conditioner"),lstop, lstop_hr, diff = diff, use_layer=use_layer, bboxes=bboxes, merge_ratio=merge_ratio)
 
         self.all_prompts = p.all_prompts.copy()
         self.all_negative_prompts = p.all_negative_prompts.copy()

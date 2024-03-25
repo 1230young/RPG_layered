@@ -386,7 +386,7 @@ if __name__ == "__main__":
                 sampler_index=sampler_index
                 )
                 l=len(image)
-                target_dirs=["generated_imgs","/pyy/openseg_blob/yuyang/code/RPG"]
+                target_dirs=["/pyy/openseg_blob/yuyang/code/RPG"]
                 for tar_dir in target_dirs:
                     for i in range(len(image)):
                         if use_layer:
@@ -394,6 +394,12 @@ if __name__ == "__main__":
                             path=f"{directory}/{file_name}"
                             os.makedirs(f"{tar_dir}/{directory}", exist_ok=True)
                             image[i].save(f"{tar_dir}/{path}")
+                            index=index_list[n]
+                            draw_bboxes=bboxes[n]
+                            source_dir=tar_dir+"/"+directory
+                            target_dir=source_dir+"_bbox"
+                            draw_bbox(index,draw_bboxes,source_dir,target_dir)
+
                         else:
                             timestamp = time.strftime('%Y%m%d_%H%M%S')
                             file_name = f"{appendix}_image_{timestamp}.png"
@@ -407,16 +413,16 @@ if __name__ == "__main__":
                             json.dump(log_json, f, indent=4)
 
 
-            if opt.config_dir is not None and opt.ckpt_dir is not None:
-                data_draw_bbox=load_inference_data_with_glyph(all=True)
-            else:
-                data_draw_bbox=load_inference_data()
-            for item_draw_bbox in data_draw_bbox:
-                index=item_draw_bbox['index']
-                draw_bboxes=item_draw_bbox['bboxes']
-                source_dir=target_dirs[-1]+"/"+directory
-                target_dir=source_dir+"_bbox"
-                draw_bbox(index,draw_bboxes,source_dir,target_dir)
+            # if opt.config_dir is not None and opt.ckpt_dir is not None:
+            #     data_draw_bbox=load_inference_data_with_glyph(all=True)
+            # else:
+            #     data_draw_bbox=load_inference_data()
+            # for item_draw_bbox in data_draw_bbox:
+            #     index=item_draw_bbox['index']
+            #     draw_bboxes=item_draw_bbox['bboxes']
+            #     source_dir=target_dirs[-1]+"/"+directory
+            #     target_dir=source_dir+"_bbox"
+            #     draw_bbox(index,draw_bboxes,source_dir,target_dir)
 
 
 

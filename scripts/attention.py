@@ -377,6 +377,9 @@ def hook_forward(self, module):
                 db(self,f"tokens : {tll},pn : {pn}")
                 db(self,[r for r in self.aratios])
                 if self.use_layer:
+                    merge_mask=torch.zeros(x.size()[0], dsh, dsw, x.size()[2]).to(x.device)
+                    merge_ratio=0.8
+                    text_mask=torch.zeros(x.size()[0], dsh, dsw, x.size()[2]).to(x.device)
                     ox = torch.zeros_like(x).reshape(x.size()[0], dsh, dsw, x.size()[2])
                     for j in range(len(bboxes)):
                         attention_mask=mask
@@ -384,6 +387,7 @@ def hook_forward(self, module):
                             context=self.byt5_prompt_embeds[self.pglyph.index(i)]
                             real_length=len(torch.where(self.byt5_attention_masks[self.pglyph.index(i)])[0])
                             context=context[:,:real_length,:]
+                            
                             # attention_mask=self.byt5_attention_masks[self.pglyph.index(i)].repeat(1,x.size()[1],1)
                             # i+=1
                             # continue
@@ -393,6 +397,8 @@ def hook_forward(self, module):
                             cnet_ext = contexts.shape[1] - (contexts.shape[1] // TOKENSCON) * TOKENSCON
                             if cnet_ext > 0:
                                 context = torch.cat([context,contexts[:,-cnet_ext:,:]],dim = 1)
+                            if j!=0:
+                                merge_mask[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]=1
                             
                             
                         negpip = negpipdealer(i,pn)
@@ -413,12 +419,20 @@ def hook_forward(self, module):
                         # out=out.permute(0,2,3,1)
                         # ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out
                         # Resize end
-                        ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]
+                        if i in self.pglyph:
+                            ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]
+                            text_mask[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]=1
+                        else:
+                            ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:] = torch.where(merge_mask[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]==1,out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]*merge_ratio+ox[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]*(1-merge_ratio),out[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:])
+
+                            if j!=0:
+                                merge_mask[:,bboxes[j][0]:bboxes[j][2],bboxes[j][1]:bboxes[j][3],:]=1
 
                         i+=1
 
                     if self.usebase : 
-                        ox = ox * (1 - self.bratios[0][0]) + outb * self.bratios[0][0]
+                        ox = torch.where(text_mask==1,ox,ox * (1 - self.bratios[0][0]) + outb * self.bratios[0][0])
+
 
 
 

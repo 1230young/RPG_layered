@@ -98,7 +98,7 @@ def convert_rgb_to_names(rgb_tuple):
 # ann_path = '/openseg_blob/liuzeyu/datasets2/test_font_byt5_100_color_and_font.json'
 # ann_path = '/openseg_blob/liuzeyu/datasets2/typo_clip_data/typoclip_onebox_200-400_simplefont_100k_multibox_val.json'
 # ann_path = '/openseg_blob/liuzeyu/datasets2/canva_ann_json/canva_font_byt5_400_val.json'
-data=load_inference_data('inference/images_100_autocaption_34b-newer.json')
+data=load_inference_data('inference/images_100_autocaption_34b-caption_short.json')
 # data = data[:100]
 
 # ann_path = '/openseg_blob/liuzeyu/datasets2/canva_ann_json/font_30k_subset.json'
@@ -196,45 +196,7 @@ for group in group_index:
                     <p>GT bbox</p>
                 </div>""")
         
-        # print('</div>')
-        # print('<div class="row">')
-        # folder='yuyang/code/RPG/multi_layers'
-        # img_name = f"/{index}.png"
-        # print(f"""
-        #         <div class="column">
-        #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-        #             <p>RPG no base no whole </p>
-        #         </div>""")
-        # folder='yuyang/code/RPG/multi_layers_base_0.0'
-        # img_name = f"/{index}.png"
-        # print(f"""
-        #         <div class="column">
-        #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-        #             <p>RPG base ratio=0 (totally region attention)</p>
-        #         </div>""")
-        # folder='yuyang/code/RPG/multi_layers_base_0.0_bbox'
-        # img_name = f"/{index}.png"
-        # print(f"""
-        #         <div class="column">
-        #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-        #             <p>RPG base 0 bbox</p>
-        #         </div>""")
         
-
-        # folder='yuyang/code/RPG/mulit_layer_glyph_mixed_w1-1_model_sdxlbase1.0_base_0.1_sampler_adaptive'
-        # img_name = f"/{index}.png"
-        # print(f"""
-        #         <div class="column">
-        #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-        #             <p>Glyph SDXL: RPG base ratio=0.1, CFG=7, Sampler=DPM_adaptive, model=sdxl base 1.0, ckpt=mixed _w1_1</p>
-        #         </div>""")
-        # folder='yuyang/code/RPG/mulit_layer_glyph_mixed_w1-1_model_sdxlbase1.0_base_0.1_sampler_adaptive_bbox'
-        # img_name = f"/{index}.png"
-        # print(f"""
-        #         <div class="column">
-        #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-        #             <p>Glyph SDXL: RPG base ratio=0.1, CFG=7, Sampler=DPM_adaptive, model=sdxl base 1.0, ckpt=mixed _w1_1 bbox</p>
-        #         </div>""")
         folder='yuyang/code/RPG/multi_layers_base_0.1_cfg_7_DPM_adaptive'
         img_name = f"/{index}.png"
         print(f"""
@@ -278,32 +240,52 @@ for group in group_index:
                     <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
                     <p>Glyph SDXL: RPG base ratio=0.0, CFG=7, model=albedobaseXL_v20, ckpt=new bbox</p>
                 </div>""")
-
-    
         
-        # folder='yuyang/code/RPG/multi_layers_resize_base_0.0'
+        print('</div>')
+        print('<div class="row">')
+
+        folder='yuyang/code/RPG/mulit_layer_short_caption_glyph_w1-1_model_albedobaseXL_base_0.0'
+        print(f"""
+                <div class="column">
+                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+                    <p>Glyph SDXL: Short caption, RPG base ratio=0.0, CFG=7, model=albedobaseXL_v20, ckpt=mixed _w1_1</p>
+                </div>""")
+        folder='yuyang/code/RPG/mulit_layer_short_caption_glyph_w1-1_model_albedobaseXL_base_0.0_bbox'
+        img_name = f"/{index}.png"
+        print(f"""
+                <div class="column">
+                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+                    <p>Glyph SDXL: Short Caption, RPG base ratio=0.0, CFG=7, model=albedobaseXL_v20, ckpt=mixed _w1_1 bbox</p>
+                </div>""")
+        folder='yuyang/code/RPG/mulit_layer_short_caption_glyph_new_model_albedobaseXL_base_0.0'
+        print(f"""
+                <div class="column">
+                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+                    <p>Glyph SDXL: Short caption, RPG base ratio=0.0, CFG=7, model=albedobaseXL_v20, ckpt=new</p>
+                </div>""")
+        folder='yuyang/code/RPG/mulit_layer_short_caption_glyph_new_model_albedobaseXL_base_0.0_bbox'
+        img_name = f"/{index}.png"
+        print(f"""
+                <div class="column">
+                    <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+                    <p>Glyph SDXL: Short caption, RPG base ratio=0.0, CFG=7, model=albedobaseXL_v20, ckpt=new bbox</p>
+                </div>""")
+        print('</div>')
+        print('<div class="row">')
+        # folder='yuyang/code/RPG/mulit_layer_short_caption_glyph_new_model_albedobaseXL_base_0.0_cfg_5'
+        # print(f"""
+        #         <div class="column">
+        #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
+        #             <p>Glyph SDXL: Short caption, RPG base ratio=0.0, CFG=5, model=albedobaseXL_v20, ckpt=new</p>
+        #         </div>""")
+        # folder='yuyang/code/RPG/mulit_layer_short_caption_glyph_new_model_albedobaseXL_base_0.0_cfg_5_bbox'
         # img_name = f"/{index}.png"
         # print(f"""
         #         <div class="column">
         #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-        #             <p>RPG resize base 0</p>
+        #             <p>Glyph SDXL: Short caption, RPG base ratio=0.0, CFG=5, model=albedobaseXL_v20, ckpt=new bbox</p>
         #         </div>""")
-        # folder='yuyang/code/RPG/multi_layers_resize_base_0.2'
-        # img_name = f"/{index}.png"
-        # print(f"""
-        #         <div class="column">
-        #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-        #             <p>RPG resize base 0.2</p>
-        #         </div>""")
-        # print('</div>')
-        # print('<div class="row">')
-        # folder='yuyang/code/RPG/multi_layers_base_1'
-        # img_name = f"/{index}.png"
-        # print(f"""
-        #         <div class="column">
-        #             <img src="{file_prefix + folder + img_name + file_sufix}" alt="image" style="max-width: 100%;">
-        #             <p>RPG base ratio=1 (=totally using SDXL)</p>
-        #         </div>""")
+        
         
         
         
