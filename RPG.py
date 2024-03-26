@@ -17,7 +17,7 @@ from template.demo import demo_list
 import time
 from mmcv import Config
 import json
-from inference_data import load_inference_data, draw_bbox, load_inference_data_with_glyph
+from inference_data import load_inference_data, draw_bbox, load_inference_data_with_glyph, load_customized
 
 
 def resize_bbox(bbox, height, width, source_height=1457, source_width=1457, scale=1):
@@ -124,7 +124,7 @@ def initialize(model_name=None, config_dir=None, ckpt_dir=None, vae_dir=None):
  
  
 def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=True,use_local=False,
-        llm_path=None,activate=True,use_base=False,base_ratio=0,base_prompt=None,batch_size=1,seed=1234,demo=False,use_personalized=False,cfg=5,steps=20,height=1024,width=1024,use_layer=False,bboxes=None,sampler_index=0):
+        llm_path=None,activate=True,use_base=False,base_ratio=0,base_prompt=None,batch_size=1,seed=1234,demo=False,use_personalized=False,cfg=5,steps=20,height=1024,width=1024,use_layer=False,bboxes=None,sampler_index=0, merge_ratio=1):
      # set model
     import modules.txt2img
     # Prompt for regional diffusion
@@ -175,6 +175,7 @@ def RPG(user_prompt,diffusion_model,version,split_ratio=None,key=None,use_gpt=Tr
     'use_common':False, # Whether to use common prompt
     'use_layer':use_layer, # Whether to use layered data
     'bboxes':bboxes, # The bounding box of layered data
+    'merge_ratio':merge_ratio, # The merge ratio of layered data    
     }
     
     image, _, _, _ = modules.txt2img.txt2img(
@@ -282,11 +283,13 @@ if __name__ == "__main__":
     parser.add_argument("--vae_dir", default=None, type=str)
     parser.add_argument("--output_dir", default=None, type=str)
     parser.add_argument("--load_typo_sdxl_pretrain_ckpt", default=None, type=str)
+    parser.add_argument("--merge_ratio", default=1.0, type=float)
     
     
     opt = parser.parse_args()
     opt.RPG_config_file="test/glyph_mixed_model_sdxl-lora-128_noise-offset_train-byt5-mapper_frominit_mix_sdxl_canva_w1-1_8ep_4x16_premiumx2.py"
     opt.all_config_file=opt.user_prompt
+
 
     config=read_config(opt.all_config_file)
     '''--use_base the function of this boolean variable is to activate the base prompt in diffusion process. Utilizing the base prompt signifies that we avoid the direct amalgamation of subregions as the latent representation. Instead, we use a foundational prompt that summarizes the image's key components and obatin the overall structure latent of the image. We then compute the weighted aggregate of these latents to yield the conclusive output. This method is instrumental in addressing the problems like omission of entities in complicated prompt generation tasks, and it also contributes to refining the edges of each subregion, ensuring they are seamlessly integrated and resonate harmony.
@@ -313,11 +316,14 @@ if __name__ == "__main__":
     steps=opt.steps # The steps of txt2img
     height=opt.height
     width=opt.width
+    merge_ratio=opt.merge_ratio
+
     if opt.layer_data is not None:
         use_layer=True
         layer_data=opt.layer_data
         if opt.config_dir is not None and opt.ckpt_dir is not None:
-            processed_data=load_inference_data_with_glyph(layer_data, all=True)
+            # processed_data=load_inference_data_with_glyph(layer_data, all=True)
+            processed_data=load_customized()
         else:
             processed_data=load_inference_data(layer_data)
         user_prompt=[i['Layer Prompt'] for i in processed_data]
@@ -360,8 +366,8 @@ if __name__ == "__main__":
                     base_prompt=base_prompts[n] if use_layer else base_prompt
                 else:
                     base_prompt=None
-                import random
-                seed=random.randint(0,100000)
+                # import random
+                # seed=random.randint(0,100000)
                 image,regional_prompt, split_ratio, textprompt=RPG(user_prompt=user_prompt,
                 diffusion_model=model_name,
                 version=version,
@@ -383,7 +389,8 @@ if __name__ == "__main__":
                 width=width,
                 use_layer=use_layer,
                 bboxes=bbox,
-                sampler_index=sampler_index
+                sampler_index=sampler_index,
+                merge_ratio=merge_ratio
                 )
                 l=len(image)
                 target_dirs=["/pyy/openseg_blob/yuyang/code/RPG"]

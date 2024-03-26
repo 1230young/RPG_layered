@@ -378,7 +378,7 @@ def hook_forward(self, module):
                 db(self,[r for r in self.aratios])
                 if self.use_layer:
                     merge_mask=torch.zeros(x.size()[0], dsh, dsw, x.size()[2]).to(x.device)
-                    merge_ratio=0.8
+                    merge_ratio=self.merge_ratio
                     text_mask=torch.zeros(x.size()[0], dsh, dsw, x.size()[2]).to(x.device)
                     ox = torch.zeros_like(x).reshape(x.size()[0], dsh, dsw, x.size()[2])
                     for j in range(len(bboxes)):

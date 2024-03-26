@@ -54,7 +54,7 @@
   {
     "name": "lastrun",
     "mode": "Columns",
-    "ratios": "1,1",
+    "ratios": "1,1; 1,1; 1,1; 1,1; 1,1; 1,1",
     "baseratios": 0.6,
     "usebase": true,
     "usecom": false,

@@ -55,14 +55,35 @@ from TypoClipSDXL.typoclip_sdxl.datasets.utils import get_new_caption_with_speci
 #     text_prompt_list += json.load(f)
 # with open("/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_text_layer_prompts.json", 'w') as f:
 #     json.dump(text_prompt_list, f, indent=4)
-import torch
-a=torch.randn(1,32,32,4096)
-b=torch.ones(1,32,32,4096)
-mask=torch.ones(1,32,32,4096)
-import time 
-start=time.time()
-c=torch.where(mask==1,a,b)
-print(time.time()-start)
-start=time.time()
-c=mask*a+(1-mask)*b
-print(time.time()-start)
+
+with open("/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_autocaption_34b-newer.json", 'r') as f:
+    item_list = json.load(f)
+
+with open("/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_text_layer_prompts.json", 'r') as f:
+    text_layer_list = json.load(f)
+for item in item_list:
+    target_text_layer=None
+    for text_layer in text_layer_list:
+        if item['index']==text_layer['index']:
+            target_text_layer=text_layer
+            break
+    if target_text_layer:
+        for layer in target_text_layer['layers']:
+            item['layers'][layer['layer_num']]['caption']=layer['caption']+" GLYPH"
+    layers=[]
+    layers_big=[]
+    item['layers'].reverse()
+    for layer in item['layers']:
+        if layer['bottom_right'][0]-layer['top_left'][0]>1200 and layer['bottom_right'][1]-layer['top_left'][1]>1200:
+            layers_big.append(layer)
+        else:
+            layers.append(layer)
+    item['layers']=layers_big+layers
+    for n,layer in enumerate(item['layers']):
+        layer['layer_num']=n
+
+with open("/pyy/yuyang_blob/pyy/code/RPG-DiffusionMaster/inference/images_100_sorted.json", 'w') as f:
+    json.dump(item_list, f, indent=4)
+
+    
+    

@@ -283,7 +283,7 @@ if __name__ == "__main__":
     parser.add_argument("--vae_dir", default=None, type=str)
     parser.add_argument("--output_dir", default=None, type=str)
     parser.add_argument("--load_typo_sdxl_pretrain_ckpt", default=None, type=str)
-    parser.add_argument("--merge_ratio", default=1, type=float)
+    parser.add_argument("--merge_ratio", default=0.9, type=float)
     
     
     opt = parser.parse_args()

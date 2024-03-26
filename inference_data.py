@@ -527,50 +527,95 @@ def load_customized_debug(json_file='/pyy/yuyang_blob/pyy/code/RPG-DiffusionMast
 
 def load_customized_debug2():
     fox=[ { "background": "The layer is a stylized stadium full of cheering fans, using a blend of blue and green colors to represent the atmosphere. The stadium is designed with lines and shapes to suggest depth and perspective, creating a dynamic and engaging scene." }, { "layer": 0, "category": "element", "caption": "A cartoon rabbit dressed in running gear, wearing a red tank top, blue shorts, and a white headband. The rabbit is in a running position, smiling and passing the baton to the next animal.", "top_left": [ 95, 450 ], "bottom_right": [ 395, 1050 ] }, { "layer": 1, "category": "element", "caption": "A cartoon bear dressed in soccer attire, wearing a green jersey, white shorts, and soccer cleats. The bear is standing on one foot while receiving the baton from the rabbit with an enthusiastic expression.", "top_left": [ 390, 455 ], "bottom_right": [ 690, 1100 ] }, { "layer": 2, "category": "element", "caption": "A cartoon fox dressed in biking gear, wearing a yellow cycling jersey, black shorts, a helmet, and cycling gloves. The fox is holding the handlebars of a bike with one hand and receiving the baton from the bear with the other hand, showing a determined and focused expression.", "top_left": [ 675, 400 ], "bottom_right": [ 1175, 1075 ] }, { "layer": 3, "category": "text", "caption": "Text \"Go Farther Together!\n\" in <color-2>, <font-137>. ", "top_left": [ 355, 125 ], "bottom_right": [ 1100, 250 ] }, { "layer": 4, "category": "element", "caption": "A cartoon baton in red and white colors, representing collaboration and support, being passed between the animals in the relay race.", "top_left": [ 355, 725 ], "bottom_right": [ 685, 775 ] } ]
-    fox_base="stylized stadium background with cheering fans in blue and green tones. In the foreground, a cartoon relay race unfolds with a rabbit in red and blue running gear smiling and passing a baton to a bear in green soccer attire, who stands on one foot with enthusiasm. Next in line, a determined fox in yellow biking gear reaches out for the baton, poised to continue the race. Above the scene, the words \"Go Farther Together!\" are boldly displayed in a striking color and font. The baton, red and white, symbolizes the spirit of teamwork as it moves between the animated animals."
+    fox_base="stylized stadium background with cheering fans in blue and green tones. In the foreground, a cartoon relay race unfolds with a rabbit in red and blue running gear smiling and passing a baton to a bear in green soccer attire, who stands on one foot with enthusiasm. Next in line, a determined fox in yellow biking gear reaches out for the baton, poised to continue the race. The rabit is on the left, the bear in the middle, and the fox on the right. Above the scene, the words \"Go Farther Together!\" are boldly displayed in a striking color and font. The baton, red and white, symbolizes the spirit of teamwork as it moves between the animated animals."
     data=[]
     data.append(fox)
     processed_data=[]
     for item in data:
         
         layer_num=len(item)
-        for length in range(1,len(item)):
-            layer_prompt=''
-            bboxes=[]
-            layer_prompt_big=''
-            bboxes_big=[]
-            background_prompt=''
-            background_bbox=[]
-            for n,layer in enumerate(item.copy()):
-                if "background" in layer.keys():
-                    background_prompt+=layer['background']+' BREAK\n'
-                    background_bbox.append([0,0,1457,1457])
-                    continue
-                if layer["category"]=='text':
-                    if layer["bottom_right"][1]-layer["top_left"][1]>1200 and layer["bottom_right"][0]-layer["top_left"][0]>1200:
-                        layer_prompt_big+=layer['caption']+' GLYPH BREAK\n'
-                        bboxes_big.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
-                    else:
-                        layer_prompt+=layer['caption']+' GLYPH BREAK\n'
-                        bboxes.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
+        layer_prompt=''
+        bboxes=[]
+        layer_prompt_big=''
+        bboxes_big=[]
+        background_prompt=''
+        background_bbox=[]
+        for n,layer in enumerate(item.copy()):
+            if "background" in layer.keys():
+                background_prompt+=layer['background']+' BREAK\n'
+                background_bbox.append([0,0,1457,1457])
+                continue
+            if layer["category"]=='text':
+                if layer["bottom_right"][1]-layer["top_left"][1]>1200 and layer["bottom_right"][0]-layer["top_left"][0]>1200:
+                    layer_prompt_big+=layer['caption']+' GLYPH BREAK\n'
+                    bboxes_big.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
                 else:
-                    if layer["bottom_right"][1]-layer["top_left"][1]>1200 and layer["bottom_right"][0]-layer["top_left"][0]>1200:
-                        layer_prompt_big+=layer['caption']+' BREAK\n'
-                        bboxes_big.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
-                    else:
-                        layer_prompt+=layer['caption']+' BREAK\n'
-                        bboxes.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
-                
-            layer_prompt=background_prompt+layer_prompt_big+layer_prompt
-            bboxes=background_bbox+bboxes_big+bboxes
-
-            index=101
+                    layer_prompt+=layer['caption']+' GLYPH BREAK\n'
+                    bboxes.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
+            else:
+                if layer["bottom_right"][1]-layer["top_left"][1]>1200 and layer["bottom_right"][0]-layer["top_left"][0]>1200:
+                    layer_prompt_big+=layer['caption']+' BREAK\n'
+                    bboxes_big.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
+                else:
+                    layer_prompt+=layer['caption']+' BREAK\n'
+                    bboxes.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
             
-            if length!=len(item):
-                index=str(index)+'_'+str(length)
-            base_prompt=fox_base
-            processed_data.append({'layer_num':layer_num,'Layer Prompt':layer_prompt,'bboxes':bboxes,'index':index,'Base Prompt':base_prompt})
+        layer_prompt=background_prompt+layer_prompt_big+layer_prompt
+        bboxes=background_bbox+bboxes_big+bboxes
+
+        index=101
+        
+        
+        base_prompt=fox_base
+        processed_data.append({'layer_num':layer_num,'Layer Prompt':layer_prompt,'bboxes':bboxes,'index':index,'Base Prompt':base_prompt})
     
+
+
+    return processed_data
+
+def load_customized():
+    fox=[ { "background": "The layer is a stylized stadium full of cheering fans, using a blend of blue and green colors to represent the atmosphere. The stadium is designed with lines and shapes to suggest depth and perspective, creating a dynamic and engaging scene." }, { "layer": 0, "category": "element", "caption": "A cartoon rabbit dressed in running gear, wearing a red tank top, blue shorts, and a white headband. The rabbit is in a running position, smiling and passing the baton to the next animal.", "top_left": [ 95, 450 ], "bottom_right": [ 395, 1050 ] }, { "layer": 1, "category": "element", "caption": "A cartoon bear dressed in soccer attire, wearing a green jersey, white shorts, and soccer cleats. The bear is standing on one foot while receiving the baton from the rabbit with an enthusiastic expression.", "top_left": [ 390, 455 ], "bottom_right": [ 690, 1100 ] }, { "layer": 2, "category": "element", "caption": "A cartoon fox dressed in biking gear, wearing a yellow cycling jersey, black shorts, a helmet, and cycling gloves. The fox is holding the handlebars of a bike with one hand and receiving the baton from the bear with the other hand, showing a determined and focused expression.", "top_left": [ 675, 400 ], "bottom_right": [ 1175, 1075 ] }, { "layer": 3, "category": "text", "caption": "Text \"Go Farther Together!\n\" in <color-2>, <font-137>. ", "top_left": [ 355, 125 ], "bottom_right": [ 1100, 250 ] }, { "layer": 4, "category": "element", "caption": "A cartoon baton in red and white colors, representing collaboration and support, being passed between the animals in the relay race.", "top_left": [ 355, 725 ], "bottom_right": [ 685, 775 ] } ]
+    fox_base="stylized stadium background with cheering fans in blue and green tones. In the foreground, a cartoon relay race unfolds with a rabbit in red and blue running gear smiling and passing a baton to a bear in green soccer attire, who stands on one foot with enthusiasm. Next in line, a determined fox in yellow biking gear reaches out for the baton, poised to continue the race. The rabit is on the left, the bear in the middle, and the fox on the right. Above the scene, the words \"Go Farther Together!\" are boldly displayed in a striking color and font. The baton, red and white, symbolizes the spirit of teamwork as it moves between the animated animals."
+    data=[]
+    data.append(fox)
+    processed_data=[]
+    for item in data:
+        
+        layer_num=len(item)
+        layer_prompt=''
+        bboxes=[]
+        layer_prompt_big=''
+        bboxes_big=[]
+        background_prompt=''
+        background_bbox=[]
+        for n,layer in enumerate(item.copy()):
+            if "background" in layer.keys():
+                background_prompt+=layer['background']+' BREAK\n'
+                background_bbox.append([0,0,1457,1457])
+                continue
+            if layer["category"]=='text':
+                if layer["bottom_right"][1]-layer["top_left"][1]>1200 and layer["bottom_right"][0]-layer["top_left"][0]>1200:
+                    layer_prompt_big+=layer['caption']+' GLYPH BREAK\n'
+                    bboxes_big.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
+                else:
+                    layer_prompt+=layer['caption']+' GLYPH BREAK\n'
+                    bboxes.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
+            else:
+                if layer["bottom_right"][1]-layer["top_left"][1]>1200 and layer["bottom_right"][0]-layer["top_left"][0]>1200:
+                    layer_prompt_big+=layer['caption']+' BREAK\n'
+                    bboxes_big.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
+                else:
+                    layer_prompt+=layer['caption']+' BREAK\n'
+                    bboxes.append([layer["top_left"][1],layer["top_left"][0],layer["bottom_right"][1],layer["bottom_right"][0]])
+            
+        layer_prompt=background_prompt+layer_prompt_big+layer_prompt
+        bboxes=background_bbox+bboxes_big+bboxes
+
+        index=101
+        
+        base_prompt=fox_base
+        processed_data.append({'layer_num':layer_num,'Layer Prompt':layer_prompt,'bboxes':bboxes,'index':index,'Base Prompt':base_prompt})
+
 
 
     return processed_data
@@ -602,7 +647,7 @@ if __name__ == "__main__":
     # with open(glyph_file, 'w') as f:
     #     json.dump(glyph_data, f, indent=4)
 
-    load_customized_debug2()
+    load_customized()
 
     # load_inference_data_with_glyph()
     # sample=[[ { "background": "The layer is completely light blue color, representing a clear sky." }, { "layer": 0, "category": "element", "caption": "The layer features a cartoon-style illustration of a chicken with a round body, large eyes, and a bright red comb and wattle. The chicken is standing on one leg, with the other leg lifted in a playful pose, and it's colored in a combination of white and light yellow shades.", "top_left": [ 150, 450 ], "bottom_right": [ 450, 1000 ] }, { "layer": 1, "category": "element", "caption": "Another cartoon-style chicken with a round body, large eyes, and a bright red comb and wattle. This chicken is standing on both legs, facing the left side of the poster, and is colored in various shades of brown.", "top_left": [ 600, 530 ], "bottom_right": [ 900, 1080 ] }, { "layer": 2, "category": "element", "caption": "The third cartoon chicken, featuring a round body, large eyes, and a bright red comb and wattle. The chicken is standing on both legs, facing the right side of the poster, and is colored in a combination of light orange and white shades.", "top_left": [ 1050, 460 ], "bottom_right": [ 1350, 1010 ] }, { "layer": 3, "category": "element", "caption": "The first cartoon-style duck, characterized by an elongated body, large eyes, and a bright orange beak. The duck is standing on both legs, facing the left side of the poster, and is colored in various shades of green.", "top_left": [ 300, 1100 ], "bottom_right": [ 600, 1450 ] }, { "layer": 4, "category": "element", "caption": "A second cartoon-style duck with an elongated body, large eyes, and a bright orange beak. The duck is standing on both legs, facing the right side of the poster, and is colored in a combination of light blue and white shades.", "top_left": [ 900, 1120 ], "bottom_right": [ 1200, 1470 ] } ],

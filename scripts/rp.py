@@ -442,11 +442,12 @@ class Script(modules.scripts.Script):
             "RP LoRA Hires Stop Step":lstop_hr,
             "RP Flip": flipper,
             "RP Use Layer": use_layer,
-            "RP Bboxes": bboxes
+            "RP Bboxes": bboxes,
+            "RP Merge Ratio": merge_ratio
         })
 
         savepresets("lastrun",rp_selected_tab, mmode, xmode, pmode, aratios,bratios,
-                     usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask,lstop, lstop_hr, flipper, use_layer, bboxes)
+                     usebase, usecom, usencom, calcmode, options, lnter, lnur, threshold, polymask,lstop, lstop_hr, flipper, use_layer, bboxes, merge_ratio)
 
         if flipper:aratios = changecs(aratios)
 
@@ -533,7 +534,7 @@ class Script(modules.scripts.Script):
             p.disable_extra_networks = False
 
     def before_hr(self, p, active, _, rp_selected_tab, mmode, xmode, pmode, aratios, bratios,
-                      usebase, usecom, usencom, calcmode,nchangeand, lnter, lnur, threshold, polymask,lstop, lstop_hr, flipper, use_layer, bboxes):
+                      usebase, usecom, usencom, calcmode,nchangeand, lnter, lnur, threshold, polymask,lstop, lstop_hr, flipper, use_layer, merge_ratio=1):
         if self.active:
             self.in_hr = True
             if "La" in self.calc:
@@ -546,7 +547,7 @@ class Script(modules.scripts.Script):
                     pass
 
     def process_batch(self, p, active, _, rp_selected_tab, mmode, xmode, pmode, aratios, bratios,
-                      usebase, usecom, usencom, calcmode,nchangeand, lnter, lnur, threshold, polymask,lstop, lstop_hr,flipper,use_layer, bboxes,**kwargs):
+                      usebase, usecom, usencom, calcmode,nchangeand, lnter, lnur, threshold, polymask,lstop, lstop_hr,flipper,use_layer, bboxes, merge_ratio, **kwargs):
         # print(kwargs["prompts"])
 
         if self.active:
